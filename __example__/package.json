@@ -1,0 +1,23 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "build": "node scripts/build/index.js",
+    "publish": "node scripts/publish.js"
+  },
+  "dependencies": {
+    "@huds0n/animations": "1.5.0-beta.8",
+    "@huds0n/components": "1.5.0-beta.8",
+    "@huds0n/utilities": "1.5.0-beta.8",
+    "expo": "^40.0.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.0.tar.gz"
+  },
+  "private": true,
+  "version": "1.5.0-beta.8"
+}

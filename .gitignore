@@ -1,0 +1,11 @@
+node_modules
+
+__example__/.expo
+__example__/node_modules
+
+!**/babel.config.js
+
+**/*.js
+**/*.d.ts.map
+**/*.d.ts
+

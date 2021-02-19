@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "removeComments": true,
+    "module": "commonjs",
+    "target": "ES2019",
+    "downlevelIteration": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-native",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "lib": ["dom", "ESNext"],
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["*"],
+  "exclude": ["node_modules"]
+}
