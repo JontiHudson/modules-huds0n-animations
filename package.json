@@ -1,6 +1,6 @@
 {
   "name": "@huds0n/animations",
-  "version": "1.5.0-beta.13",
+  "version": "1.5.0-beta.14",
   "description": "Animates View, FlatList, and LazyList",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -19,15 +19,18 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@huds0n/components": "1.5.0-beta.13",
-    "@huds0n/core": "1.5.0-beta.13",
-    "@huds0n/error": "1.5.0-beta.13",
-    "@huds0n/lazy-list": "1.5.0-beta.13",
-    "@huds0n/shared-state": "1.5.0-beta.13",
-    "@huds0n/utilities": "1.5.0-beta.13"
+    "@huds0n/components": "1.5.0-beta.14",
+    "@huds0n/core": "1.5.0-beta.14",
+    "@huds0n/error": "1.5.0-beta.14",
+    "@huds0n/lazy-list": "1.5.0-beta.14",
+    "@huds0n/shared-state": "1.5.0-beta.14",
+    "@huds0n/utilities": "1.5.0-beta.14"
   },
   "devDependencies": {
-    "@types/react-native": "~0.63.2"
+    "@types/react": "~16.9.35",
+    "@types/react-native": "~0.63.2",
+    "@types/tinycolor2": "^1.4.2",
+    "typescript": "~4.0.0"
   },
   "publishConfig": {
     "access": "public"
