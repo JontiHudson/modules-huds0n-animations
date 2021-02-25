@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { Dimensions, Image, StyleSheet } from 'react-native';
 
 import { AnimationSheet, AnimatedFlatList } from '@huds0n/animations';
 import { Button, View } from '@huds0n/components';
-import { useCallback, useState, useRef } from '@huds0n/utilities';
 
 import { DemoState } from '../state';
 

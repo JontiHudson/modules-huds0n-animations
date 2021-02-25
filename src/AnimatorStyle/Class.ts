@@ -25,8 +25,11 @@ import {
   AnimationValues,
   AnimationValueStore,
   AttachProp,
+  AttachPoint,
+  AttachStyle,
   ClassOptions,
   DefaultConfig,
+  EasingFn,
   ForceUpdateFn,
   StyleType,
 } from './types';
@@ -81,7 +84,6 @@ export class AnimatorStyle {
 
     this.animate = this.animate.bind(this);
     this.attach = this.attach.bind(this);
-    this.compose = this.compose.bind(this);
     this.removeAllListeners = this.removeAllListeners.bind(this);
     this.setStyle = this.setStyle.bind(this);
   }
@@ -108,39 +110,16 @@ export class AnimatorStyle {
     this._forceUpdateFn();
   }
 
+  // Animate Methods
+
   animate(animation: AnimationProp) {
     toArray(animation).forEach((a) => {
       a.onAnimationStart?.(a);
-      const animatedValue = this._handleAnimation(a.to);
+      const animatedValue = this._handleAnimation(StyleSheet.flatten(a.to));
       this._handleAnimatedValue(a, animatedValue);
     });
 
     this._forceUpdateFn();
-  }
-
-  compose(to: ViewStyle | TextStyle, animatedValue?: Animated.Value) {
-    const _animatedValue = this._handleAnimation(to, animatedValue);
-
-    this._forceUpdateFn();
-
-    return _animatedValue;
-  }
-
-  attach({
-    to,
-    animatedValue,
-    inputRange,
-    useNativeDriver = false,
-  }: AttachProp) {
-    Animated.timing(this.compose(to), {
-      toValue: animatedValue.interpolate({
-        inputRange,
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-      }),
-      duration: 0,
-      useNativeDriver,
-    }).start();
   }
 
   private _handleAnimation(
@@ -226,9 +205,10 @@ export class AnimatorStyle {
       }
 
       try {
-        if (valueStore[styleKey]) {
+        if (valueStore[styleKey]?.outputRange) {
           const {
             animatedValue: oldAnimatedValue,
+            // @ts-ignore
             outputRange: [oldStart, oldEnd],
           } = valueStore[styleKey];
 
@@ -259,7 +239,6 @@ export class AnimatorStyle {
                 break;
 
               case StyleType.Degrees:
-                console.log({ oldStart, oldEnd });
                 startValue = getStartString(oldStart, oldEnd, progress, 'deg');
                 break;
             }
@@ -346,23 +325,24 @@ export class AnimatorStyle {
     animation: Animation,
     animatedValue: Animated.Value,
   ) {
-    return ({ finished }: { finished: boolean }) => {
+    return () => {
+      const attachedProps = this._getAnimatedValueAttachedProps(animatedValue);
+
       if (typeof animation.loop === 'number') {
         animation.loop = animation.loop - 0.5;
       }
 
-      if (this._shouldRepeat(animation, finished)) {
+      if (attachedProps.length && this._shouldRepeat(animation)) {
         this._handleAnimatedValue(animation, animatedValue);
 
         return;
       }
 
-      const chainedAnimation = animation.onAnimationEnd?.({
-        animation,
-        finished,
-      });
+      animatedValue.removeAllListeners();
 
-      if (finished && chainedAnimation) {
+      const chainedAnimation = animation.onAnimationEnd?.(attachedProps);
+
+      if (chainedAnimation) {
         requestAnimationFrame(() => {
           this.animate(chainedAnimation);
         });
@@ -370,12 +350,23 @@ export class AnimatorStyle {
     };
   }
 
-  private _shouldRepeat({ loop }: Animation, finished: boolean) {
+  private _getAnimatedValueAttachedProps(animatedValue: Animated.Value) {
+    const styleProps = Object.entries(this._styleAnim)
+      .filter(([key, store]) => store.animatedValue === animatedValue)
+      .map(([key]) => key);
+
+    const transformProps = Object.entries(this._transformAnim)
+      .filter(([key, store]) => store.animatedValue === animatedValue)
+      .map(([key]) => key);
+
+    return [...styleProps, ...transformProps];
+  }
+
+  private _shouldRepeat({ loop }: Animation) {
     return (
-      finished &&
-      (loop === true ||
-        (typeof loop === 'number' && loop > 0) ||
-        (typeof loop === 'object' && loop.current))
+      loop === true ||
+      (typeof loop === 'number' && loop > 0) ||
+      (typeof loop === 'object' && loop.current)
     );
   }
 
@@ -403,13 +394,200 @@ export class AnimatorStyle {
     });
   }
 
-  private _removeAnimatedValue(animatedValue: Animated.Value) {
-    animatedValue.removeAllListeners();
-  }
-
   removeAllListeners() {
     this._animatedValueProgress.forEach((progress, animatedValue) => {
-      this._removeAnimatedValue(animatedValue);
+      animatedValue.removeAllListeners();
+    });
+  }
+
+  // Attach Methods
+
+  attach(attachProp: AttachProp) {
+    const animatedValue = this._handleAttachedValue(attachProp);
+
+    const at = this._handleAt(attachProp);
+
+    this._handleAttachStyle(animatedValue, at, attachProp.easing);
+    this._handleAttachTransform(animatedValue, at, attachProp.easing);
+
+    this._forceUpdateFn();
+
+    return animatedValue;
+  }
+
+  private _handleAttachedValue({ animatedValue, spring }: AttachProp) {
+    if (!spring) {
+      return animatedValue;
+    }
+
+    // @ts-ignore
+    const linkAnimatedValue = new Animated.Value(animatedValue._value);
+
+    Animated.spring(linkAnimatedValue, {
+      useNativeDriver: this._useNativeDriver,
+      ...(typeof spring === 'object' && { spring }),
+      toValue: animatedValue,
+    }).start();
+
+    return linkAnimatedValue;
+  }
+
+  private _handleAt({ at = [], over }: AttachProp) {
+    if (!over) {
+      return at;
+    }
+
+    if (over.points < 2) {
+      throw new Error({
+        name: 'Animation Style Handler Error',
+        code: 'INSUFFICIENT_OVER_POINTS',
+        message: `At least 2 points are required to attach over`,
+        severity: 'MEDIUM',
+      });
+    }
+
+    const overRange = over.inputEnd - over.inputStart;
+    const overPointInterval = overRange / (over.points - 1);
+
+    let point = 0;
+    const overPoints = [...at];
+
+    while (point < over.points) {
+      const input = over.inputStart + point * overPointInterval;
+
+      overPoints.push({
+        input,
+        style: over.fn(input),
+      });
+
+      point++;
+    }
+
+    console.log({ overPoints });
+
+    return overPoints;
+  }
+
+  private _handleAttachStyle(
+    animatedValue: Animated.Value,
+    at: AttachPoint[],
+    easing?: EasingFn,
+  ) {
+    const stylePoints = at.reduce<AttachStyle>((acc, a) => {
+      const { transform, ...style } = StyleSheet.flatten(a.style);
+
+      Object.entries(style).forEach(([key, value]) => {
+        acc[key] = acc[key]
+          ? [...acc[key], { input: a.input, value }]
+          : [{ input: a.input, value }];
+      });
+      return acc;
+    }, {});
+
+    this._updateAttachStore(
+      stylePoints,
+      this._styleAnim,
+      animatedValue,
+      easing,
+    );
+
+    Object.entries(this._styleAnim).forEach(([key, { interpolation }]) => {
+      // @ts-ignore
+      this._style[key] = interpolation;
+    });
+  }
+
+  private _handleAttachTransform(
+    animatedValue: Animated.Value,
+    at: AttachPoint[],
+    easing?: EasingFn,
+  ) {
+    const transformPoints = at.reduce<AttachStyle>((acc, a) => {
+      const { transform } = StyleSheet.flatten(a.style);
+
+      if (!transform) {
+        return acc;
+      }
+
+      const transformObj = transform.reduce((acc, t) => ({ ...acc, ...t }), {});
+
+      Object.entries(transformObj).forEach(([key, value]) => {
+        acc[key] = acc[key]
+          ? [...acc[key], { input: a.input, value }]
+          : [{ input: a.input, value }];
+      });
+      return acc;
+    }, {});
+
+    this._updateAttachStore(
+      transformPoints,
+      this._transformAnim,
+      animatedValue,
+      easing,
+    );
+
+    this._transform = {
+      ...this._transform,
+      ...mapObject<
+        AnimationValueStore,
+        AnimationValues,
+        Animated.AnimatedInterpolation
+      >(this._transformAnim, ({ interpolation }) => interpolation),
+    };
+  }
+
+  private _updateAttachStore(
+    attachStyle: AttachStyle,
+    valueStore: AnimationValueStore,
+    animatedValue: Animated.Value,
+    easing?: EasingFn,
+  ) {
+    Object.entries(attachStyle).forEach(([styleKey, positionValues]) => {
+      try {
+        if (!positionValues.length) {
+          return;
+        }
+
+        if (positionValues.length === 1) {
+          valueStore[styleKey] = {
+            animatedValue,
+            interpolation: positionValues[0].value,
+            outputRange: null,
+          };
+          return;
+        }
+
+        const isColor = styleKey.match('color') || styleKey.match('Color');
+
+        const inputRange = positionValues.map((p) => p.input);
+        const outputRange = isColor
+          ? positionValues.map((p) => colorToRGBAString(p.value))
+          : positionValues.map((p) => p.value);
+
+        const interpolation = animatedValue.interpolate({
+          inputRange,
+          outputRange,
+          extrapolate: 'clamp',
+          ...(easing && { easing }),
+        });
+
+        valueStore[styleKey] = {
+          animatedValue,
+          interpolation,
+          outputRange,
+        };
+      } catch (e) {
+        throw Error.transform(e, {
+          name: 'Animation Style Handler Error',
+          code: 'INITIALIZE_STYLE_ERROR',
+          message: `Style prop ${styleKey} could not be interpolated. Please check start and end values`,
+          severity: 'MEDIUM',
+          info: {
+            currentStyle: this._style,
+            key: styleKey,
+          },
+        });
+      }
     });
   }
 }

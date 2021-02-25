@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Easing, StyleSheet } from 'react-native';
 
 import { AnimatedView } from '@huds0n/animations';
 import { Button, Icon, View } from '@huds0n/components';
-import { useState } from '@huds0n/utilities';
 
 import { DemoState } from '../state';
 

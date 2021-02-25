@@ -1,16 +1,15 @@
-import React from 'react';
-import { PanResponder, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Easing, PanResponder, StyleSheet } from 'react-native';
 
 import { AnimatedView } from '@huds0n/animations';
 import { Button, Icon, View } from '@huds0n/components';
-import { useAnimatedValue, useRef } from '@huds0n/utilities';
 
 import { DemoState } from '../state';
 
 export default function PanHandler() {
   const backPress = () => DemoState.setProp('screen', 'WELCOME');
 
-  const panY = useAnimatedValue();
+  const panY = useRef(new Animated.Value(0)).current;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -31,15 +30,56 @@ export default function PanHandler() {
   return (
     <>
       <View style={styles.contentsContainer}>
-        <AnimatedView
-          {...panResponder.panHandlers}
-          attach={{
-            to: styles.boxEnd,
-            animatedValue: panY,
-            inputRange: [0, 300],
-          }}
-          style={styles.boxStart}
-        />
+        <View style={styles.columnContainer}>
+          <AnimatedView
+            {...panResponder.panHandlers}
+            attach={{
+              at: [
+                {
+                  input: -200,
+                  style: {
+                    backgroundColor: colors.BLUE,
+                    transform: [{ translateY: -200 }],
+                  },
+                },
+                {
+                  input: 0,
+                  style: { backgroundColor: colors.BLACK },
+                },
+                {
+                  input: 200,
+                  style: {
+                    backgroundColor: colors.RED,
+                    transform: [{ translateY: 200 }],
+                  },
+                },
+              ],
+              animatedValue: panY,
+            }}
+            style={styles.viewBase}
+          />
+        </View>
+        <View style={styles.columnContainer}>
+          <AnimatedView
+            attach={{
+              over: {
+                inputStart: -200,
+                inputEnd: 200,
+                points: 20,
+                fn: (input) => ({
+                  transform: [
+                    { translateY: input },
+                    {
+                      translateX: Math.pow(input / 200, 3) * 80,
+                    },
+                  ],
+                }),
+              },
+              animatedValue: panY,
+            }}
+            style={[styles.viewBase, { backgroundColor: colors.GREEN }]}
+          />
+        </View>
       </View>
       <Button onPress={backPress} style={styles.backButton}>
         Back
@@ -51,6 +91,8 @@ export default function PanHandler() {
 const colors = {
   BLUE: 'blue',
   RED: 'red',
+  GREEN: 'green',
+  BLACK: 'black',
 };
 
 const styles = StyleSheet.create({
@@ -60,57 +102,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   contentsContainer: {
-    alignItems: 'center',
+    flexDirection: 'row',
     flex: 1,
   },
-  boxStart: {
-    backgroundColor: colors.RED,
+  columnContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  viewBase: {
     height: 50,
     width: 50,
-  },
-  boxEnd: {
-    backgroundColor: colors.BLUE,
-    height: 250,
-    top: 300,
-    width: 250,
-    transform: [{ rotate: '360deg' }],
-  },
-});
-
-const icons = Icon.createSheet({
-  base: {
-    set: 'AntDesign',
-    size: 40,
-  },
-  down: {
-    name: 'caretdown',
-    containerStyle: {
-      alignSelf: 'center',
-      marginTop: 80,
-      position: 'absolute',
-    },
-  },
-  left: {
-    name: 'caretleft',
-    containerStyle: {
-      alignSelf: 'flex-start',
-      marginTop: 40,
-      position: 'absolute',
-    },
-  },
-  right: {
-    name: 'caretright',
-    containerStyle: {
-      alignSelf: 'flex-end',
-      marginTop: 40,
-      position: 'absolute',
-    },
-  },
-  up: {
-    name: 'caretup',
-    containerStyle: {
-      alignSelf: 'center',
-      position: 'absolute',
-    },
   },
 });

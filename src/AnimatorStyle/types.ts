@@ -6,22 +6,17 @@ export type AnimationTransform = Record<string, any>;
 export type AnimationValues = {
   animatedValue: Animated.Value;
   interpolation: Animated.AnimatedInterpolation;
-  outputRange: any[];
+  outputRange: any[] | null;
 };
 export type AnimationValueStore = Record<string, AnimationValues>;
 
-export type AnimationEndEvent = {
-  animation: Animation;
-  finished: boolean;
-};
 export type OnAnimationStartFn = (animation: Animation) => void;
-export type OnAnimationEndFn = (event: AnimationEndEvent) => void | Animation;
+export type OnAnimationEndFn = (attachedProps: string[]) => void;
 
 export type Loop = number | boolean | { current: boolean };
 
 type CommonAnimation = {
-  _cacheId?: symbol;
-  to: TextStyle;
+  to: StyleProp<TextStyle>;
   loop?: Loop;
   onAnimationEnd?: OnAnimationEndFn;
   onAnimationStart?: OnAnimationStartFn;
@@ -49,10 +44,32 @@ export type Animation = CommonAnimation &
 export type AnimationProp = Animation | Animation[];
 
 export type AttachProp = {
-  to: ViewStyle | TextStyle;
-  animatedValue: Animated.Value | Animated.AnimatedInterpolation;
-  inputRange: [number, number];
-  useNativeDriver?: boolean;
+  at?: AttachPoint[];
+  over?: AttachFunction;
+  animatedValue: Animated.Value;
+  easing?: EasingFn;
+  spring?: boolean | SpringAnimation;
+};
+
+export type AttachFunction = {
+  inputStart: number;
+  inputEnd: number;
+  points: number;
+  fn: (input: number) => TextStyle;
+};
+
+export type EasingFn = (value: number) => number;
+
+export type AttachPoint = {
+  input: number;
+  style: StyleProp<TextStyle>;
+};
+
+export type AttachStyle = {
+  [styleProps: string]: {
+    input: number;
+    value: any;
+  }[];
 };
 
 export type DefaultConfig =

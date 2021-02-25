@@ -9,10 +9,10 @@ export function flattenAnimationHx<ItemT>(
   baseStyle: Types.ItemStartStyle<ItemT>,
   info: Types.AnimatedItemInfo<ItemT>,
 ): ViewStyle {
-  // @ts-ignore
   return animations.reduce(
     (acc, animation) => ({
       ...acc,
+      // @ts-ignore
       ...flattenProp<AnimatedView.Animation>(animation, info).to,
     }),
     flattenProp<ViewStyle>(baseStyle, info),

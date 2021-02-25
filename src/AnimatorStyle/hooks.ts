@@ -9,7 +9,6 @@ export namespace useAnimatorStyle {
   export type AttachProp = Types.AttachProp;
   export type DefaultConfig = Types.DefaultConfig;
   export type Loop = Types.Loop;
-  export type AnimationEndEvent = Types.AnimationEndEvent;
   export type OnAnimationEndFn = Types.OnAnimationEndFn;
   export type OnAnimationStartFn = Types.OnAnimationStartFn;
   export type Options = Types.HookOptions;

@@ -32,6 +32,7 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
 > {
   static theming = theming;
   static DEFAULT_ANIMATION_DURATION = 500;
+  static DEFAULT_FADE_OVERLAP = 1 / 3;
 
   static getDerivedStateFromProps(props: Types.Props, state: State) {
     const {
@@ -48,7 +49,7 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
       animationDuration = ContentsFaderContainerComponent.DEFAULT_ANIMATION_DURATION,
       children,
       dependencies,
-      fadeOverlap = 1 / 3,
+      fadeOverlap = ContentsFaderContainerComponent.DEFAULT_FADE_OVERLAP,
       style,
       useNativeDriver = true,
     } = props;

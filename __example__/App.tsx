@@ -6,6 +6,7 @@ import { ContentsFaderContainer } from '@huds0n/animations';
 import AnimatedFlatList from './screens/AnimatedFlatList';
 import MoveBall from './screens/MoveBall';
 import PanHandler from './screens/PanHandler';
+import RandomAnimate from './screens/RandomAnimate';
 import TransitionContainer from './screens/TransitionContainer';
 import Welcome from './screens/Welcome';
 
@@ -18,6 +19,7 @@ export default function App() {
     ANIMATED_FLAT_LIST: <AnimatedFlatList />,
     MOVE_BALL: <MoveBall />,
     PANHANDLER: <PanHandler />,
+    RANDOM_ANIMATE: <RandomAnimate />,
     TRANSITION_CONTAINER: <TransitionContainer />,
     WELCOME: <Welcome />,
   };

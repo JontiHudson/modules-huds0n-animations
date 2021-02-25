@@ -4,6 +4,7 @@ export type ScreenName =
   | 'ANIMATED_FLAT_LIST'
   | 'MOVE_BALL'
   | 'PANHANDLER'
+  | 'RANDOM_ANIMATE'
   | 'TRANSITION_CONTAINER'
   | 'WELCOME';
 

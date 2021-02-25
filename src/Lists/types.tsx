@@ -14,13 +14,13 @@ export type ListRenderItem<ItemT = any> = (
   info: ListRenderItemInfo<ItemT>,
 ) => React.ReactElement | null;
 
-export type OnAnimationEndFn<ItemT = any> = () =>
-  | ItemAnimation<ItemT>
-  | undefined;
+export type OnAnimationEndFn<ItemT = any> = (
+  attachedProps: string[],
+) => ItemAnimation<ItemT> | undefined | void;
 
-export type Animation<ItemT = any> = Omit<
+export type ElementAnimation<ItemT = any> = Omit<
   AnimatedView.Animation,
-  'onAnimationEnd' | 'onAnimationEnd'
+  'onAnimationEnd'
 > & {
   onAnimationEnd?: OnAnimationEndFn<ItemT>;
   stagger?: number;
@@ -37,8 +37,8 @@ export type ItemStartStyle<ItemT = any> =
   | ((info: AnimatedItemInfo<ItemT>) => ViewStyle);
 
 export type ItemAnimation<ItemT = any> =
-  | Animation
-  | ((info: AnimatedItemInfo<ItemT>) => Animation);
+  | ElementAnimation
+  | ((info: AnimatedItemInfo<ItemT>) => ElementAnimation);
 
 export type AnimatedListProps<ItemT> = {
   itemAnimate?: ItemAnimation<ItemT>;

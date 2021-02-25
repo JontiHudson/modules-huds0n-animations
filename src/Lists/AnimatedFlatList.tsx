@@ -10,7 +10,7 @@ import { theming } from './theming';
 import * as Types from './types';
 
 export namespace AnimatedFlatList {
-  export type Animation = Types.Animation;
+  export type ElementAnimation = Types.ElementAnimation;
   export type Loop = AnimatedView.Loop;
 
   export type OnAnimationEndFn = Types.OnAnimationEndFn;
@@ -227,7 +227,7 @@ export class AnimatedFlatList<ItemT = any> extends React.PureComponent<
       stagger = 0,
       staggerByRow,
       ...animation
-    } = flattenProp<AnimatedFlatList.Animation>(currentAnimation, info);
+    } = flattenProp<AnimatedFlatList.ElementAnimation>(currentAnimation, info);
 
     const callAnimationEnd =
       stagger < 0 ? startIndex === index : endIndex === index;
@@ -249,10 +249,10 @@ export class AnimatedFlatList<ItemT = any> extends React.PureComponent<
     let complete = false;
 
     const onAnimationEnd = callAnimationEnd
-      ? ({ finished }: { finished: boolean }) => {
-          if (finished && !complete) {
+      ? (attachedProps: string[]) => {
+          if (!complete) {
             complete = true;
-            const chainedAnimation = onListAnimationEnd?.();
+            const chainedAnimation = onListAnimationEnd?.(attachedProps);
 
             if (chainedAnimation) {
               this._animationsPending.unshift(chainedAnimation);

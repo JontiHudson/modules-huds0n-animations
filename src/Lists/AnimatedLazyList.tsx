@@ -11,7 +11,7 @@ import { theming } from './theming';
 import * as Types from './types';
 
 export namespace AnimatedLazyList {
-  export type Animation = Types.Animation;
+  export type ElementAnimation = Types.ElementAnimation;
   export type Loop = AnimatedView.Loop;
 
   export type OnAnimationEndFn = Types.OnAnimationEndFn;
@@ -81,14 +81,14 @@ export class AnimatedLazyList<ItemT = any> extends React.PureComponent<
 
     if (
       !ListRef ||
-      SharedLazyArray.state.isLoading ||
+      SharedLazyArray.isLoading ||
       !SharedLazyArray.data.length ||
       isAnimating
     ) {
       return false;
     }
 
-    if (SharedLazyArray.state.pageEnd) {
+    if (SharedLazyArray.pageEnd) {
       return true;
     }
 
@@ -118,10 +118,9 @@ export class AnimatedLazyList<ItemT = any> extends React.PureComponent<
   componentDidMount() {
     this._handleRef();
 
-    //
     const { SharedLazyArray } = this.props;
 
-    SharedLazyArray.addListener('isLoading', () => {
+    SharedLazyArray.SharedState.addListener('isLoading', () => {
       this._startNextAnimation();
     });
   }
@@ -274,7 +273,7 @@ export class AnimatedLazyList<ItemT = any> extends React.PureComponent<
       stagger = 0,
       staggerByRow,
       ...animation
-    } = flattenProp<AnimatedLazyList.Animation>(currentAnimation, info);
+    } = flattenProp<AnimatedLazyList.ElementAnimation>(currentAnimation, info);
 
     const callAnimationEnd =
       stagger < 0 ? startIndex === index : endIndex === index;
@@ -296,10 +295,10 @@ export class AnimatedLazyList<ItemT = any> extends React.PureComponent<
     let complete = false;
 
     const onAnimationEnd = callAnimationEnd
-      ? ({ finished }: { finished: boolean }) => {
-          if (finished && !complete) {
+      ? (attachedProps: string[]) => {
+          if (!complete) {
             complete = true;
-            const chainedAnimation = onListAnimationEnd?.();
+            const chainedAnimation = onListAnimationEnd?.(attachedProps);
 
             if (chainedAnimation) {
               this._animationsPending.unshift(chainedAnimation);

@@ -35,10 +35,6 @@ export namespace createAnimatedComponent {
       inputRange: [number, number],
       useNativeDriver?: boolean,
     ) => void;
-    compose: (
-      to: TextStyle | ViewStyle,
-      animatedValue?: Animated.Value,
-    ) => Animated.CompositeAnimation;
     setStyle: (style: StyleProp<ViewStyle>) => void;
   } & (C extends new (...args: any) => any
     ? InstanceType<C>
@@ -58,7 +54,6 @@ export namespace createAnimatedComponent {
     Omit<useAnimatorStyle.Options, 'animateOnMount' | 'initialStyle'> & {
       animate?: AnimationProp;
       attach?: AttachProp;
-      compose?: { to: TextStyle | ViewStyle; animatedValue: Animated.Value };
     };
 
   export type Animated<
@@ -73,7 +68,6 @@ export namespace createAnimatedComponent {
   export type Animation = useAnimatorStyle.Animation;
   export type DefaultConfig = useAnimatorStyle.DefaultConfig;
   export type Loop = useAnimatorStyle.Loop;
-  export type AnimationEndEvent = useAnimatorStyle.AnimationEndEvent;
   export type OnAnimationEndFn = useAnimatorStyle.OnAnimationEndFn;
   export type OnAnimationStartFn = useAnimatorStyle.OnAnimationStartFn;
 }
@@ -112,15 +106,7 @@ export function createAnimatedComponent<
   // @ts-ignore
   return React.forwardRef<any, createAnimatedComponent.AnimatedProps<P>>(
     (
-      {
-        attach,
-        compose,
-        defaultConfig,
-        useNativeDriver,
-        style,
-        animate,
-        ...props
-      },
+      { attach, defaultConfig, useNativeDriver, style, animate, ...props },
       ref,
     ) => {
       const copiedRef = useRef<any>(null);
@@ -133,7 +119,7 @@ export function createAnimatedComponent<
 
       useEffect(() => {
         attach && AnimatorStyle.attach(attach);
-      }, [attach?.animatedValue, JSON.stringify(attach?.to)]);
+      }, [attach?.animatedValue, JSON.stringify(attach)]);
 
       const prevStyle = usePrev(style) || {};
 
@@ -177,14 +163,6 @@ export function createAnimatedComponent<
         { layout: 'BEFORE' },
       );
 
-      useEffect(
-        () => {
-          compose && AnimatorStyle.compose(compose.to, compose.animatedValue);
-        },
-        [compose && JSON.stringify(compose.to)],
-        { layout: 'BEFORE' },
-      );
-
       useImperativeHandle(
         ref,
         () =>
@@ -192,7 +170,6 @@ export function createAnimatedComponent<
             ...copiedRef.current,
             animate: AnimatorStyle.animate,
             attach: AnimatorStyle.attach,
-            compose: AnimatorStyle.compose,
             setStyle: AnimatorStyle.setStyle,
           } as createAnimatedComponent.AnimatedRef<C>),
       );

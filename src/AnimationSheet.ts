@@ -1,7 +1,7 @@
 import * as Types from './Lists/types';
 
 function create<
-  A extends Record<string, Types.Animation | Types.ItemAnimation>
+  A extends Record<string, Types.ElementAnimation | Types.ItemAnimation>
 >(animations: A) {
   return animations;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 
 import {
@@ -8,7 +8,6 @@ import {
   TransitionContainer,
 } from '@huds0n/animations';
 import { Button, Pressable, View } from '@huds0n/components';
-import { useState } from '@huds0n/utilities';
 
 import { DemoState } from '../state';
 
@@ -36,6 +35,13 @@ export default function Welcome() {
         DemoState.setProp('screen', 'PANHANDLER');
       },
       backgroundColor: colors.NAVY,
+    },
+    {
+      text: 'Random Animate',
+      onPress: () => {
+        DemoState.setProp('screen', 'RANDOM_ANIMATE');
+      },
+      backgroundColor: colors.PEACH,
     },
     {
       text: 'Transition Container',

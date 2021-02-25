@@ -15,7 +15,6 @@ export namespace AnimatedView {
   export type AnimationProp = createAnimatedComponent.AnimationProp;
   export type DefaultConfig = createAnimatedComponent.DefaultConfig;
   export type Loop = createAnimatedComponent.Loop;
-  export type AnimationEndEvent = createAnimatedComponent.AnimationEndEvent;
   export type OnAnimationStartFn = createAnimatedComponent.OnAnimationStartFn;
   export type OnAnimationEndFn = createAnimatedComponent.OnAnimationEndFn;
 }
