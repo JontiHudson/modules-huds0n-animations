@@ -452,27 +452,98 @@ Combines **[ColorFader](#color_fader)** and **[ContentsFader](#contents_fader)**
 
 ### **Lists**<a name="lists"></a>
 
-Extends [Huds0n FlatList](https://github.com/JontiHudson/modules-huds0n-components#flat-list) and [Huds0n LazyList](https://github.com/JontiHudson/modules-huds0n-lazy-list) to provide item animation.
+Adds animation attached to flatlist scroll with automatic animate in.
 
 _Additional props:_
 
-| Prop                                     | Description                                | Type                                                                  |
-| ---------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------- |
-| itemAnimate                              | Causes items to animate to specified style | _ElementAnimation_ or _((info: { item, index }) => ElementAnimation)_ |
-| itemStartStyle                           | Item's style on mounting                   | _style_ or _((info: { item, index }) => style)_                       |
-| useNativeDriver                          | Whether animation uses native driver       | _boolean_                                                             |
-| refreshItemAnimate</br>_(LazyList only)_ | Animation on pull to refresh               | _ElementAnimation_ or _((info: { item, index }) => ElementAnimation)_ |
+| Prop              | Required/_Default_ | Description                                                                                   | Type                                                            |
+| ----------------- | :----------------: | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| animationDelay    |        _0_         | Delay in ms on animating in                                                                   | _number_                                                        |
+| animationDuration |       _2500_       | Duration in ms of animating in                                                                | _number_                                                        |
+| at                |         -          | Set styles at position points to animate between                                              | _(**ElementPosition**) => [attachAtProp](#attach)_              |
+| itemLength        |         ✔️         | Length of _item element_ in direction of scroll                                               | _number_                                                        |
+| footerOffset      |         -          | Footer offset                                                                                 | _number_                                                        |
+| headerOffset      |         -          | Header offset                                                                                 | _number_                                                        |
+| ListComponent     |     _FlatList_     | List component to animate (will inherit props)                                                | _React List Component_                                          |
+| offsetAnim        |         -          | Scroll animated value</br>Can be attached to other Animated Components for complex animations | _Animated Value_                                                |
+| onAnimationEnd    |         -          | Called when animation in complete                                                             | _() => void_                                                    |
+| over              |         -          | Set style function animate over                                                               | _(**ElementPosition**) => [attachOverProp](#attach)_            |
+| renderItem        |         ✔️         | Item render function</br>Passed **ElementPosition** with _ListRenderItemInfo_                 | _(**ElementPosition** & ListRenderItemInfo) => React Component_ |
+| useNativeDriver   |      _false_       | Whether animation uses native driver                                                          | _boolean_                                                       |
 
 <br>
 
-_ElementAnimation extends [animationProps](#animation_props):_
+_ElementPosition:_
 
-| Prop         | Description                           | Type      |
-| ------------ | ------------------------------------- | --------- |
-| stagger      | The stagger delay between items       | _number_  |
-| staggerByRow | Whether the stagger is by item or row | _boolean_ |
+| Prop  | Description                                                       | Type     |
+| ----- | ----------------------------------------------------------------- | -------- |
+| index | Item index                                                        | _number_ |
+| row   | Item row                                                          | _number_ |
+| start | Scroll offset at which the element is after the start of the view | _number_ |
+| end   | Scroll offset at which the element is after the end of the view   | _number_ |
 
 </br>
+
+```jsx
+<AnimatedList
+  animationDuration={4000}
+  itemLength={150}
+  at={({ index, start, end }) => [
+    /* At 150px above the top of the view items have an opacity 0.5 */
+    { input: start + 150, style: { opacity: 0.5 } },
+
+    /* When the item is in full view they have opacity 1 */
+    { input: start, style: { opacity: 1 } },
+
+    /* At 200px above the bottom of the view the items will start to fade from opacity 1 */
+    {
+      input: end + 200,
+      style: { opacity: 1 },
+    },
+
+    /* At 100px above the bottom of the view the elements start their complex movement out */
+    {
+      input: end + 100,
+      style: {
+        transform: [
+          { translateX: 0 },
+          { translateY: 0 },
+          { scale: 1 },
+          { rotate: '0deg' },
+        ],
+      },
+    },
+
+    /* By the time the element reaches the bottom of the screen has completed it's complex movement.
+    Note how remainder is use to calculate column */
+    {
+      input: end,
+      style: {
+        opacity: 0,
+        transform: [
+          { translateX: index % 2 ? 150 : -150 },
+          { translateY: -150 },
+          { scale: 0 },
+          { rotate: index % 2 ? '-360deg' : '360deg' },
+        ],
+      },
+    },
+  ]}
+  data={DEMO_DATA}
+  keyName="value"
+  numColumns={2}
+  renderItem={({ item }) => {
+    return (
+      <View style={styles.itemContainer}>
+        <Image source={{ uri: item.PICTURE_URI }} style={styles.itemPicture} />
+      </View>
+    );
+  }}
+  useNativeDriver
+  reverseZIndex
+  style={styles.flatlist}
+/>
+```
 
 <img src="README/list.gif" width="200">
 

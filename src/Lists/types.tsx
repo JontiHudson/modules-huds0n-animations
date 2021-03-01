@@ -1,81 +1,63 @@
 import {
-  ListRenderItemInfo as ListRenderItemInfoRN,
+  Animated,
+  ListRenderItem as ListRenderItemRN,
+  StyleProp,
   ViewStyle,
 } from 'react-native';
 
 import { FlatList } from '@huds0n/components';
-import { LazyList } from '@huds0n/lazy-list';
 
 import { AnimatedView } from '../Containers';
 
-export type ListRenderItemInfo<ItemT = any> = ListRenderItemInfoRN<ItemT>;
-
-export type ListRenderItem<ItemT = any> = (
-  info: ListRenderItemInfo<ItemT>,
-) => React.ReactElement | null;
-
-export type OnAnimationEndFn<ItemT = any> = (
-  attachedProps: string[],
-) => ItemAnimation<ItemT> | undefined | void;
-
-export type ElementAnimation<ItemT = any> = Omit<
-  AnimatedView.Animation,
-  'onAnimationEnd'
-> & {
-  onAnimationEnd?: OnAnimationEndFn<ItemT>;
-  stagger?: number;
-  staggerByRow?: boolean;
-};
-
-export type AnimatedItemInfo<ItemT = any> = {
-  item: ItemT;
-  index: number;
-};
-
-export type ItemStartStyle<ItemT = any> =
+export type AnimateStyle<ItemT = any> =
   | ViewStyle
-  | ((info: AnimatedItemInfo<ItemT>) => ViewStyle);
+  | ((info: FlatList.ListRenderItemInfo<ItemT>) => ViewStyle);
 
-export type ItemAnimation<ItemT = any> =
-  | ElementAnimation
-  | ((info: AnimatedItemInfo<ItemT>) => ElementAnimation);
+export type ElementPosition = {
+  index: number;
+  row: number;
+  start: number;
+  end: number;
+};
+
+export type ListRenderItemInfo<ItemT> = FlatList.ListRenderItemInfo<ItemT> & {
+  offsetAnim: Animated.Value;
+  offsetValue: React.MutableRefObject<number>;
+} & ElementPosition;
+
+export type BaseListProps = {
+  ListHeaderComponent?: React.ReactNode;
+  ListFooterComponent?: React.ReactNode;
+  contentOffset?: FlatList.Props['contentOffset'];
+  onScroll?: FlatList.Props['onScroll'];
+  renderItem?: ListRenderItemRN<any> | null;
+  scrollEnabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+};
 
 export type AnimatedListProps<ItemT> = {
-  itemAnimate?: ItemAnimation<ItemT>;
-  itemStartStyle: ItemStartStyle<ItemT>;
-  renderItem: ListRenderItem<ItemT>;
+  animationDelay?: number;
+  animationDuration?: number;
+  at?: (elementPosition: ElementPosition) => AnimatedView.AttachProp['at'];
+  itemLength: number;
+  footerOffset?: number;
+  headerOffset?: number;
+  ListComponent?: React.ComponentType<any>;
+  offsetAnim?: Animated.Value;
+  onAnimationEnd?: () => any;
+  over?: (elementPosition: ElementPosition) => AnimatedView.AttachProp['over'];
+  renderItem: (info: ListRenderItemInfo<ItemT>) => React.ReactElement | null;
   useNativeDriver?: boolean;
 };
 
-export type FlatListProps<ItemT = any> = Omit<
-  FlatList.Props<ItemT>,
-  'extraData' | 'horizontal' | 'renderItem'
+export type ListProps<
+  L extends BaseListProps = FlatList.Props,
+  ItemT = any
+> = Omit<
+  L,
+  | 'renderItem'
+  | 'ListHeaderComponent'
+  | 'ListEmptyComponent'
+  | 'ListFooterComponent'
 > &
   AnimatedListProps<ItemT>;
-
-export type LazyListProps<ItemT = any> = Omit<
-  LazyList.Props<ItemT>,
-  'extraData' | 'horizontal' | 'renderItem'
-> &
-  AnimatedListProps<ItemT> & {
-    refreshItemAnimate?: ItemAnimation<ItemT>;
-  };
-
-export type StartEnd = { startIndex: number; endIndex: number };
-export type VisibilityDetails = {
-  startIndex: number;
-  endIndex: number;
-};
-
-export type Frame = {
-  index: number;
-  offset: number;
-  length: number;
-};
-
-export type State<ItemT> = {
-  currentAnimation: null | ItemAnimation<ItemT>;
-  isAnimating: boolean;
-  ListRef: any;
-  reorientating: boolean;
-};

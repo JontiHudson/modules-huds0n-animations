@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
-import { Animated, PanResponder, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import TinyColor from 'tinycolor2';
 
 import { AnimatedView } from '@huds0n/animations';
-import { Button, Icon, View } from '@huds0n/components';
+import { Button, View } from '@huds0n/components';
 import { useForceUpdate } from '@huds0n/utilities';
 
 import { DemoState } from '../state';
@@ -88,43 +88,5 @@ const styles = StyleSheet.create({
     top: 300,
     width: 250,
     transform: [{ rotate: '360deg' }],
-  },
-});
-
-const icons = Icon.createSheet({
-  base: {
-    set: 'AntDesign',
-    size: 40,
-  },
-  down: {
-    name: 'caretdown',
-    containerStyle: {
-      alignSelf: 'center',
-      marginTop: 80,
-      position: 'absolute',
-    },
-  },
-  left: {
-    name: 'caretleft',
-    containerStyle: {
-      alignSelf: 'flex-start',
-      marginTop: 40,
-      position: 'absolute',
-    },
-  },
-  right: {
-    name: 'caretright',
-    containerStyle: {
-      alignSelf: 'flex-end',
-      marginTop: 40,
-      position: 'absolute',
-    },
-  },
-  up: {
-    name: 'caretup',
-    containerStyle: {
-      alignSelf: 'center',
-      position: 'absolute',
-    },
   },
 });

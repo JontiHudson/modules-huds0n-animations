@@ -113,13 +113,17 @@ export class AnimatorStyle {
   // Animate Methods
 
   animate(animation: AnimationProp) {
-    toArray(animation).forEach((a) => {
-      a.onAnimationStart?.(a);
+    const animations = toArray(animation);
+    animations.forEach((a) => {
       const animatedValue = this._handleAnimation(StyleSheet.flatten(a.to));
       this._handleAnimatedValue(a, animatedValue);
     });
 
     this._forceUpdateFn();
+
+    animations.forEach((a) => {
+      a.onAnimationStart?.(a);
+    });
   }
 
   private _handleAnimation(
@@ -412,10 +416,16 @@ export class AnimatorStyle {
 
     this._forceUpdateFn();
 
+    attachProp.onAttach?.();
+
     return animatedValue;
   }
 
   private _handleAttachedValue({ animatedValue, spring }: AttachProp) {
+    if (typeof animatedValue === 'number') {
+      return new Animated.Value(animatedValue);
+    }
+
     if (!spring) {
       return animatedValue;
     }
@@ -434,7 +444,7 @@ export class AnimatorStyle {
 
   private _handleAt({ at = [], over }: AttachProp) {
     if (!over) {
-      return at;
+      return at.sort((a, b) => a.input - b.input);
     }
 
     if (over.points < 2) {
@@ -457,15 +467,13 @@ export class AnimatorStyle {
 
       overPoints.push({
         input,
-        style: over.fn(input),
+        style: over.fn(input, point / over.points),
       });
 
       point++;
     }
 
-    console.log({ overPoints });
-
-    return overPoints;
+    return overPoints.sort((a, b) => a.input - b.input);
   }
 
   private _handleAttachStyle(

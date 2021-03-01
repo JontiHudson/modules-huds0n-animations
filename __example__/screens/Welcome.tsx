@@ -68,52 +68,56 @@ export default function Welcome() {
 
   return (
     <>
-      <View style={styles.textContainer}>
-        <AnimatedText
-          animate={[animations.textPopIn, animations.textFlash]}
-          style={styles.textStart}
-        >
+      <AnimatedView
+        animate={animations.textPopIn}
+        style={styles.textContainer}
+        useNativeDriver
+      >
+        <AnimatedText animate={animations.textFlash} style={styles.textStart}>
           Welcome
         </AnimatedText>
-      </View>
-      <View style={styles.footerContainer}>
-        <AnimatedView animate={animations.footerSlideIn} style={styles.footer}>
-          <Button
-            feedback="fade"
-            onPress={prevPress}
-            style={[styles.footerSideButton, { backgroundColor: colors.TEAL }]}
-          >
-            Prev
-          </Button>
+      </AnimatedView>
 
-          <View style={styles.footerCenterButtonContainer}>
-            <Pressable feedback="fade" onPress={currentButton.onPress}>
-              <TransitionContainer
-                backgroundColor={currentButton.backgroundColor}
-                style={{
-                  borderWidth: StyleSheet.hairlineWidth,
-                  height: 40,
-                  padding: 10,
-                  borderRadius: 10,
-                }}
-                dependencies={currentButton.text}
-              >
-                <Text style={styles.footerCenterButtonText}>
-                  {currentButton.text}
-                </Text>
-              </TransitionContainer>
-            </Pressable>
-          </View>
+      <AnimatedView
+        animate={animations.footerSlideIn}
+        style={styles.footer}
+        useNativeDriver
+      >
+        <Button
+          feedback="fade"
+          onPress={prevPress}
+          style={[styles.footerSideButton, { backgroundColor: colors.TEAL }]}
+        >
+          Prev
+        </Button>
 
-          <Button
-            feedback="fade"
-            onPress={nextPress}
-            style={[styles.footerSideButton, { backgroundColor: colors.NAVY }]}
-          >
-            Next
-          </Button>
-        </AnimatedView>
-      </View>
+        <View style={styles.footerCenterButtonContainer}>
+          <Pressable feedback="fade" onPress={currentButton.onPress}>
+            <TransitionContainer
+              backgroundColor={currentButton.backgroundColor}
+              style={{
+                borderWidth: StyleSheet.hairlineWidth,
+                height: 40,
+                padding: 10,
+                borderRadius: 10,
+              }}
+              dependencies={currentButton.text}
+            >
+              <Text style={styles.footerCenterButtonText}>
+                {currentButton.text}
+              </Text>
+            </TransitionContainer>
+          </Pressable>
+        </View>
+
+        <Button
+          feedback="fade"
+          onPress={nextPress}
+          style={[styles.footerSideButton, { backgroundColor: colors.NAVY }]}
+        >
+          Next
+        </Button>
+      </AnimatedView>
     </>
   );
 }
@@ -130,8 +134,12 @@ const colors = {
 
 const styles = StyleSheet.create({
   footer: {
+    position: 'absolute',
     flexDirection: 'row',
-    top: '100%',
+    bottom: 0,
+    height: 60,
+    width: '100%',
+    transform: [{ translateY: 60 }],
   },
   footerCenterButton: {
     borderRadius: 10,
@@ -147,12 +155,7 @@ const styles = StyleSheet.create({
   footerCenterButtonText: {
     textAlign: 'center',
   },
-  footerContainer: {
-    height: '100%',
-    justifyContent: 'flex-end',
-    position: 'absolute',
-    width: '100%',
-  },
+
   footerSideButton: {
     flex: 1,
     margin: 10,
@@ -167,14 +170,16 @@ const styles = StyleSheet.create({
   textStart: {
     color: colors.ORANGE,
     fontSize: 48,
-    transform: [{ scale: 0 }],
   },
 });
 
 const animations = AnimationSheet.create({
   footerSlideIn: {
-    to: { top: '0%' },
-    duration: 2000,
+    to: {
+      opacity: 1,
+      transform: [{ translateY: 0 }],
+    },
+    duration: 1000,
   },
   textPopIn: {
     to: { transform: [{ scale: 1 }] },

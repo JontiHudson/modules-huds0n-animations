@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import { Animated, Easing, PanResponder, StyleSheet } from 'react-native';
+import { Animated, PanResponder, StyleSheet } from 'react-native';
 
-import { AnimatedView } from '@huds0n/animations';
-import { Button, Icon, View } from '@huds0n/components';
+import { AnimatedView, AnimationSheet } from '@huds0n/animations';
+import { Button, View } from '@huds0n/components';
 
 import { DemoState } from '../state';
 
@@ -34,26 +34,7 @@ export default function PanHandler() {
           <AnimatedView
             {...panResponder.panHandlers}
             attach={{
-              at: [
-                {
-                  input: -200,
-                  style: {
-                    backgroundColor: colors.BLUE,
-                    transform: [{ translateY: -200 }],
-                  },
-                },
-                {
-                  input: 0,
-                  style: { backgroundColor: colors.BLACK },
-                },
-                {
-                  input: 200,
-                  style: {
-                    backgroundColor: colors.RED,
-                    transform: [{ translateY: 200 }],
-                  },
-                },
-              ],
+              at: animations.left,
               animatedValue: panY,
             }}
             style={styles.viewBase}
@@ -62,19 +43,7 @@ export default function PanHandler() {
         <View style={styles.columnContainer}>
           <AnimatedView
             attach={{
-              over: {
-                inputStart: -200,
-                inputEnd: 200,
-                points: 20,
-                fn: (input) => ({
-                  transform: [
-                    { translateY: input },
-                    {
-                      translateX: Math.pow(input / 200, 3) * 80,
-                    },
-                  ],
-                }),
-              },
+              over: animations.right,
               animatedValue: panY,
             }}
             style={[styles.viewBase, { backgroundColor: colors.GREEN }]}
@@ -113,5 +82,41 @@ const styles = StyleSheet.create({
   viewBase: {
     height: 50,
     width: 50,
+  },
+});
+
+const animations = AnimationSheet.create({
+  left: [
+    {
+      input: -200,
+      style: {
+        backgroundColor: colors.BLUE,
+        transform: [{ translateY: -200 }],
+      },
+    },
+    {
+      input: 0,
+      style: { backgroundColor: colors.BLACK },
+    },
+    {
+      input: 200,
+      style: {
+        backgroundColor: colors.RED,
+        transform: [{ translateY: 200 }],
+      },
+    },
+  ],
+  right: {
+    inputStart: -200,
+    inputEnd: 200,
+    points: 20,
+    fn: (input) => ({
+      transform: [
+        { translateY: input },
+        {
+          translateX: Math.pow(input / 200, 3) * 80,
+        },
+      ],
+    }),
   },
 });

@@ -46,16 +46,18 @@ export type AnimationProp = Animation | Animation[];
 export type AttachProp = {
   at?: AttachPoint[];
   over?: AttachFunction;
-  animatedValue: Animated.Value;
+  animatedValue: Animated.Value | number;
+  deps?: any;
   easing?: EasingFn;
   spring?: boolean | SpringAnimation;
+  onAttach?: () => void;
 };
 
 export type AttachFunction = {
   inputStart: number;
   inputEnd: number;
   points: number;
-  fn: (input: number) => TextStyle;
+  fn: (input: number, progress: number) => TextStyle;
 };
 
 export type EasingFn = (value: number) => number;

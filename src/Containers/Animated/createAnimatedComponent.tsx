@@ -3,13 +3,7 @@ import React, {
   useImperativeHandle,
   RefObject,
 } from 'react';
-import {
-  Animated,
-  StyleProp,
-  StyleSheet,
-  TextStyle,
-  ViewStyle,
-} from 'react-native';
+import { Animated, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
 import {
   toArray,
@@ -29,12 +23,7 @@ export namespace createAnimatedComponent {
 
   export type AnimatedRef<C extends React.ComponentType<any>> = {
     animate: (animation: useAnimatorStyle.AnimationProp) => void;
-    attach: (
-      to: ViewStyle | TextStyle,
-      animatedValue: Animated.Value | Animated.AnimatedInterpolation,
-      inputRange: [number, number],
-      useNativeDriver?: boolean,
-    ) => void;
+    attach: (attach: useAnimatorStyle.AttachProp) => void;
     setStyle: (style: StyleProp<ViewStyle>) => void;
   } & (C extends new (...args: any) => any
     ? InstanceType<C>
@@ -117,9 +106,13 @@ export function createAnimatedComponent<
         useNativeDriver,
       });
 
-      useEffect(() => {
-        attach && AnimatorStyle.attach(attach);
-      }, [attach?.animatedValue, JSON.stringify(attach)]);
+      useEffect(
+        () => {
+          attach && AnimatorStyle.attach(attach);
+        },
+        [attach?.animatedValue, JSON.stringify(attach), attach?.deps],
+        { layout: 'BEFORE' },
+      );
 
       const prevStyle = usePrev(style) || {};
 

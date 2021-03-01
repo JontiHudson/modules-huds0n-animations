@@ -57,7 +57,7 @@ function _TransitionContainer({
     { layout: 'BEFORE', skipMounts: true },
   );
 
-  const [{ height = 0, width = 0 } = {}, onLayout] = useLayout();
+  const [{ height, width }, onLayout] = useLayout();
 
   useEffect(
     () => {

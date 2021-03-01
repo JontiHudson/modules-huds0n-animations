@@ -1,2 +1,1 @@
-export * from './AnimatedFlatList';
-export * from './AnimatedLazyList';
+export * from './AnimatedList';

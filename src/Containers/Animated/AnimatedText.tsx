@@ -13,6 +13,7 @@ export namespace AnimatedText {
 
   export type Animation = createAnimatedComponent.Animation;
   export type AnimationProp = createAnimatedComponent.AnimationProp;
+  export type AttachProp = createAnimatedComponent.AttachProp;
   export type DefaultConfig = createAnimatedComponent.DefaultConfig;
   export type Loop = createAnimatedComponent.Loop;
   export type OnAnimationStartFn = createAnimatedComponent.OnAnimationStartFn;
