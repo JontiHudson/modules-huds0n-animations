@@ -305,17 +305,15 @@ Sometimes you may want to attach an animation to another **Animated.Value**, e.g
     at: [
       {
         input: -200,
-        backgroundColor: 'blue'
-        style: { transform: [{ translateY: -200 }] },
+        style: { backgroundColor: 'blue', transform: [{ translateY: -200 }] },
       },
       {
         input: 0,
-        backgroundColor: 'black',
+        style: { backgroundColor: 'black' },
       },
       {
         input: 200,
-        backgroundColor: 'red',
-        style: { transform: [{ translateY: 200 }] },
+        style: { backgroundColor: 'red', transform: [{ translateY: 200 }] },
       },
     ],
     animatedValue: panY,
@@ -330,29 +328,19 @@ For more complex animation paths you can set a _style function_ to run over a se
 ```jsx
 <AnimatedView
   attach={{
-    at: [
-      attach={{
-        over: {
-          inputStart: -200,
-          inputEnd: 200,
-          points: 20,
-          fn: (input) => ({
-            transform: [
-              { translateY: input },
-              {
-                translateX: Math.pow(input / 200, 3) * 80,
-              },
-            ],
-          }),
-        },
-        animatedValue: panY,
-      }}
-      style={{
-        backgroundColor: 'green',
-        height: 50,
-        width: 50,
-      }}
-    ]
+    over: {
+      inputStart: -200,
+      inputEnd: 200,
+      points: 20,
+      fn: (input) => ({
+        transform: [
+          { translateY: input },
+          {
+            translateX: Math.pow(input / 200, 3) * 80,
+          },
+        ],
+      }),
+    },
     animatedValue: panY,
   }}
 />

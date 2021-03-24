@@ -122,7 +122,9 @@ export class AnimatorStyle {
     this._forceUpdateFn();
 
     animations.forEach((a) => {
-      a.onAnimationStart?.(a);
+      a.delay
+        ? setTimeout(() => a.onAnimationStart?.(a), a.delay)
+        : a.onAnimationStart?.(a);
     });
   }
 
