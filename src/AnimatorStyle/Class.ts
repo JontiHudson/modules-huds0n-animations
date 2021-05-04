@@ -115,7 +115,9 @@ export class AnimatorStyle {
   animate(animation: AnimationProp) {
     const animations = toArray(animation);
     animations.forEach((a) => {
-      const animatedValue = this._handleAnimation(StyleSheet.flatten(a.to));
+      const animatedValue = this._handleAnimation(
+        StyleSheet.flatten(a.to || {}),
+      );
       this._handleAnimatedValue(a, animatedValue);
     });
 
