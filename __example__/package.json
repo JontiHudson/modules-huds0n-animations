@@ -10,19 +10,9 @@
     "publish": "node scripts/publish.js"
   },
   "dependencies": {
-    "@huds0n/animations": "1.5.1-beta3",
-    "@huds0n/components": "1.5.1-beta3",
-    "expo": "^41.0.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz"
+    "@huds0n/animations": "1.6.0-beta-1",
+    "@huds0n/components": "1.6.0-beta-1",
+    "expo": "^41.0.0"
   },
-  "private": true,
-  "version": "1.5.1-beta3",
-  "devDependencies": {
-    "@types/react": "~16.9.35",
-    "@types/react-native": "~0.63.2",
-    "@types/tinycolor2": "^1.4.2",
-    "typescript": "~4.0.0"
-  }
+  "private": true
 }

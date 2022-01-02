@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import TinyColor from 'tinycolor2';
 
 import { AnimatedView } from '@huds0n/animations';
-import { Button, View } from '@huds0n/components';
+import { Button } from '@huds0n/components';
 import { useForceUpdate } from '@huds0n/utilities';
 
 import { DemoState } from '../state';

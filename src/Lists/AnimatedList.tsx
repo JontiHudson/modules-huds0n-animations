@@ -1,7 +1,7 @@
 import React from 'react';
-import { Animated, ListRenderItemInfo } from 'react-native';
+import { Animated, ListRenderItemInfo, View, ViewProps } from 'react-native';
 
-import { FlatList, View } from '@huds0n/components';
+import { FlatList } from '@huds0n/components';
 import {
   useAnimatedValue,
   useAnimatedCurrentValue,
@@ -122,7 +122,7 @@ function handleRender(
 function handleLayout(
   props: Types.ListProps,
   setState: SetStateFn,
-): View.Props['onLayout'] {
+): ViewProps['onLayout'] {
   return useCallback(({ nativeEvent: { layout } }) => {
     const flatListLength = props.horizontal ? layout.width : layout.height;
 

@@ -1,13 +1,13 @@
 import {
   Animated,
-  LogBox,
+  Platform,
   StyleProp,
   StyleSheet,
   TextStyle,
   ViewStyle,
 } from 'react-native';
 
-import Error from '@huds0n/error';
+import Huds0nError from '@huds0n/error';
 import { mapObject, toArray } from '@huds0n/utilities';
 
 import {
@@ -34,7 +34,11 @@ import {
   StyleType,
 } from './types';
 
-LogBox.ignoreLogs([`Trying to remove a child that doesn't exist`]);
+if (Platform.OS !== 'web') {
+  require('react-native').LogBox.ignoreLogs([
+    `Trying to remove a child that doesn't exist`,
+  ]);
+}
 
 export class AnimatorStyle {
   private static DEFAULT_DURATION = 1000;
@@ -299,7 +303,7 @@ export class AnimatorStyle {
           };
         }
       } catch (e) {
-        throw Error.transform(e, {
+        throw Huds0nError.transform(e, {
           name: 'Animation Style Handler Error',
           code: 'INITIALIZE_STYLE_ERROR',
           message: `Style prop ${styleKey} could not be interpolated. Please check start and end values`,
@@ -386,11 +390,13 @@ export class AnimatorStyle {
 
     const toValue = progress < 0.5 ? 1 : 0;
 
-    return (animation.type === 'DECAY'
-      ? Animated.decay
-      : animation.type === 'SPRING'
-      ? Animated.spring
-      : Animated.timing)(animatedValue, {
+    return (
+      animation.type === 'DECAY'
+        ? Animated.decay
+        : animation.type === 'SPRING'
+        ? Animated.spring
+        : Animated.timing
+    )(animatedValue, {
       duration: AnimatorStyle.DEFAULT_DURATION,
       // @ts-ignore
       velocity:
@@ -452,7 +458,7 @@ export class AnimatorStyle {
     }
 
     if (over.points < 2) {
-      throw new Error({
+      throw new Huds0nError({
         name: 'Animation Style Handler Error',
         code: 'INSUFFICIENT_OVER_POINTS',
         message: `At least 2 points are required to attach over`,
@@ -589,7 +595,7 @@ export class AnimatorStyle {
           outputRange,
         };
       } catch (e) {
-        throw Error.transform(e, {
+        throw Huds0nError.transform(e, {
           name: 'Animation Style Handler Error',
           code: 'INITIALIZE_STYLE_ERROR',
           message: `Style prop ${styleKey} could not be interpolated. Please check start and end values`,

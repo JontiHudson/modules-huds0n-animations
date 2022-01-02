@@ -11,7 +11,9 @@ export type AnimationValues = {
 export type AnimationValueStore = Record<string, AnimationValues>;
 
 export type OnAnimationStartFn = (animation: Animation) => void;
-export type OnAnimationEndFn = (attachedProps: string[]) => void;
+export type OnAnimationEndFn = (
+  attachedProps: string[],
+) => void | AnimationProp;
 
 export type Loop = number | boolean | { current: boolean };
 

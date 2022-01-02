@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import { Animated, PanResponder, StyleSheet } from 'react-native';
+import { Animated, PanResponder, StyleSheet, View } from 'react-native';
 
 import { AnimatedView, AnimationSheet } from '@huds0n/animations';
-import { Button, View } from '@huds0n/components';
+import { Button } from '@huds0n/components';
 
 import { DemoState } from '../state';
 

@@ -11,31 +11,37 @@ import { ContentsFaderContainer } from '../ContentsFader';
 
 import { useAnimatorStyle } from '../../AnimatorStyle';
 
-import { theming } from './theming';
-
 export namespace TransitionContainer {
   export type Props = ContentsFaderContainer.Props & {
     backgroundColor?: string | null;
     overrideColor?: string;
+    onSizeChange?: (newSize: { height: number; width: number }) => any;
   };
 
-  export type Component = React.FunctionComponent<Props> & {
-    theming: typeof theming;
-  };
+  export type Component = React.FunctionComponent<Props>;
 }
 
-function _TransitionContainer({
+export function TransitionContainer({
   animate = true,
   animationDuration,
   backgroundColor,
   children,
   dependencies,
   fadeOverlap,
+  onAnimationEnd,
+  onAnimationStart,
+  onSizeChange,
   style,
+  pointerEvents,
+  useNativeDriver,
   ...viewProps
 }: TransitionContainer.Props) {
   const {
-    innerStyle,
+    innerStyle: {
+      alignItems = 'center',
+      justifyContent = 'center',
+      ...innerStyle
+    },
     outerStyle: { backgroundColor: styleBackgroundColor, ...outerStyle },
   } = separateInnerOuterStyles(style);
 
@@ -61,10 +67,13 @@ function _TransitionContainer({
 
   useEffect(
     () => {
-      AnimatorStyle.animate({
-        to: { height, width },
-        duration: animationDuration,
-      });
+      onSizeChange?.({ height, width });
+      animate
+        ? AnimatorStyle.animate({
+            to: { height, width },
+            duration: animationDuration,
+          })
+        : AnimatorStyle.setStyle({ height, width });
     },
     [height, width],
     { layout: 'AFTER' },
@@ -90,18 +99,24 @@ function _TransitionContainer({
           AnimatorStyle.style,
           {
             ...outerStyle,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems,
+            justifyContent,
             overflow: 'hidden',
           },
+          !animate && { height: undefined, width: undefined },
         ]}
       >
         <ContentsFaderContainer
+          animate={animate}
           animationDuration={animationDuration || 1000}
+          dependencies={dependencies}
           fadeOverlap={fadeOverlap}
+          onAnimationEnd={onAnimationEnd}
+          onAnimationStart={onAnimationStart}
+          pointerEvents={pointerEvents}
           style={{
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems,
+            justifyContent,
             position: 'absolute',
             height: outerStyle.height
               ? '100%'
@@ -109,7 +124,7 @@ function _TransitionContainer({
             width: outerStyle.width ? '100%' : Dimensions.get('screen').width,
             ...innerStyle,
           }}
-          dependencies={dependencies}
+          useNativeDriver={useNativeDriver}
         >
           {children}
         </ContentsFaderContainer>
@@ -117,8 +132,3 @@ function _TransitionContainer({
     </>
   );
 }
-
-export const TransitionContainer: TransitionContainer.Component = Object.assign(
-  _TransitionContainer,
-  { theming },
-);

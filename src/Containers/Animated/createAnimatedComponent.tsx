@@ -5,14 +5,7 @@ import React, {
 } from 'react';
 import { Animated, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 
-import {
-  toArray,
-  useEffect,
-  usePrev,
-  useRef,
-  measureNodeAsync,
-  getNodeId,
-} from '@huds0n/utilities';
+import { toArray, useEffect, usePrev, useRef } from '@huds0n/utilities';
 
 import { useAnimatorStyle } from '../../AnimatorStyle';
 
@@ -31,11 +24,7 @@ export namespace createAnimatedComponent {
     ? ExtractRef<P>
     : {});
 
-  export type AnimationProp =
-    | useAnimatorStyle.AnimationProp
-    | ((
-        layout: measureNodeAsync.NodeMeasurements,
-      ) => useAnimatorStyle.AnimationProp);
+  export type AnimationProp = useAnimatorStyle.AnimationProp;
 
   export type AttachProp = useAnimatorStyle.AttachProp;
 
@@ -45,14 +34,13 @@ export namespace createAnimatedComponent {
       attach?: AttachProp;
     };
 
-  export type Animated<
-    C extends React.ComponentType<any>
-  > = C extends React.ComponentType<infer P>
-    ? React.ForwardRefExoticComponent<
-        React.PropsWithoutRef<AnimatedProps<P>> &
-          React.RefAttributes<AnimatedRef<C>>
-      >
-    : never;
+  export type Animated<C extends React.ComponentType<any>> =
+    C extends React.ComponentType<infer P>
+      ? React.ForwardRefExoticComponent<
+          React.PropsWithoutRef<AnimatedProps<P>> &
+            React.RefAttributes<AnimatedRef<C>>
+        >
+      : never;
 
   export type Animation = useAnimatorStyle.Animation;
   export type DefaultConfig = useAnimatorStyle.DefaultConfig;
@@ -86,7 +74,7 @@ function ensureClassComponent<P>(
 export function createAnimatedComponent<
   C extends ((props: P & any) => React.ReactElement) | React.ComponentType<P>,
   P extends { style?: S },
-  S extends StyleProp<ViewStyle>
+  S extends StyleProp<ViewStyle>,
 >(Component: C): createAnimatedComponent.Animated<C> {
   const AnimatedComponent = Animated.createAnimatedComponent(
     ensureClassComponent(Component),
@@ -103,6 +91,7 @@ export function createAnimatedComponent<
       const AnimatorStyle = useAnimatorStyle({
         defaultConfig,
         initialStyle: style,
+
         useNativeDriver,
       });
 
@@ -137,22 +126,9 @@ export function createAnimatedComponent<
         () => {
           if (!animate) return;
 
-          if (typeof animate === 'function') {
-            setTimeout(() => {
-              measureNodeAsync(getNodeId(copiedRef)).then((layout) => {
-                AnimatorStyle.animate(animate(layout));
-              });
-            });
-          } else {
-            AnimatorStyle.animate(animate);
-          }
+          AnimatorStyle.animate(animate);
         },
-        [
-          animate &&
-            (typeof animate === 'function'
-              ? animate.toString()
-              : JSON.stringify(toArray(animate).map((a) => a.to))),
-        ],
+        [animate && JSON.stringify(toArray(animate).map((a) => a.to))],
         { layout: 'BEFORE' },
       );
 

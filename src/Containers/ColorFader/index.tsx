@@ -5,19 +5,16 @@ import { useEffect } from '@huds0n/utilities';
 
 import { useAnimatorStyle } from '../../AnimatorStyle';
 
-import { theming } from './theming';
 import * as Types from './types';
 
 export namespace ColorFaderContainer {
   export type Children = Types.Children;
   export type Props = Types.Props;
 
-  export type Component = React.FunctionComponent<Props> & {
-    theming: typeof theming;
-  };
+  export type Component = React.FunctionComponent<Props>;
 }
 
-function _ColorFaderContainer(props: ColorFaderContainer.Props) {
+export function ColorFaderContainer(props: ColorFaderContainer.Props) {
   const {
     animate = true,
     animation,
@@ -62,8 +59,3 @@ function _ColorFaderContainer(props: ColorFaderContainer.Props) {
     </Animated.View>
   );
 }
-
-export const ColorFaderContainer: ColorFaderContainer.Component = Object.assign(
-  _ColorFaderContainer,
-  { theming },
-);

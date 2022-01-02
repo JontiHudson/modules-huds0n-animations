@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 import {
   AnimatedList,
@@ -7,7 +7,7 @@ import {
   AnimatedView,
   AnimationSheet,
 } from '@huds0n/animations';
-import { Button, View } from '@huds0n/components';
+import { Button } from '@huds0n/components';
 import { useAnimatedValue } from '@huds0n/utilities';
 
 import { DemoState } from '../state';

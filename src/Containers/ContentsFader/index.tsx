@@ -6,21 +6,18 @@ import {
   shallowCompareArrays,
 } from '@huds0n/utilities';
 
-import { theming } from './theming';
 import * as Types from './types';
 
 export namespace ContentsFaderContainer {
   export type Props = Types.Props;
-  export type Component = React.ComponentClass<Props> & {
-    theming: typeof theming;
-  };
+  export type Component = React.ComponentClass<Props>;
 }
 
 type State = {
   currentAnim: Animated.Value;
   currentKey: string;
   firstMount: boolean;
-  forceUpdate: () => void;
+  update: () => void;
   prevChildren: Types.Children;
   prevDependencies: Types.Dependencies;
   prevElements: Map<string, JSX.Element>;
@@ -30,7 +27,6 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
   Types.Props,
   State
 > {
-  static theming = theming;
   static DEFAULT_ANIMATION_DURATION = 500;
   static DEFAULT_FADE_OVERLAP = 1 / 3;
 
@@ -39,19 +35,22 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
       currentAnim,
       currentKey,
       firstMount,
-      forceUpdate,
       prevChildren,
       prevDependencies,
       prevElements,
+      update,
     } = state;
     const {
       animate = true,
       animationDuration = ContentsFaderContainerComponent.DEFAULT_ANIMATION_DURATION,
       children,
       dependencies,
+      pointerEvents,
       fadeOverlap = ContentsFaderContainerComponent.DEFAULT_FADE_OVERLAP,
       style,
       useNativeDriver = true,
+      onAnimationEnd,
+      onAnimationStart,
     } = props;
 
     const depsChanged =
@@ -70,6 +69,7 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
           currentKey,
           <Animated.View
             key={currentKey}
+            pointerEvents="none"
             style={StyleSheet.flatten([
               {
                 position: 'absolute',
@@ -91,8 +91,10 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
           useNativeDriver,
         }).start(() => {
           prevElements.delete(currentKey);
-          forceUpdate();
+          update();
+          onAnimationEnd?.(dependencies);
         });
+        onAnimationStart?.(dependencies);
       } else {
         prevElements.clear();
       }
@@ -105,7 +107,10 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
           delay: firstMount ? 0 : animationDuration * (0.5 - fadeOverlap / 2),
           duration: animationDuration * (0.5 + fadeOverlap / 2),
           useNativeDriver,
-        }).start();
+        }).start(() => {
+          onAnimationEnd?.(dependencies);
+        });
+        onAnimationStart?.(dependencies);
       } else {
         nextAnim.setValue(1);
       }
@@ -120,18 +125,29 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
     };
   }
 
+  mounted: boolean;
+
   constructor(props: Types.Props) {
     super(props);
 
+    this.mounted = true;
     this.state = {
       currentAnim: new Animated.Value(0),
       currentKey: 'INITIAL_KEY',
       firstMount: true,
-      forceUpdate: this.forceUpdate.bind(this),
       prevChildren: null,
       prevDependencies: props.dependencies,
       prevElements: new Map(),
+      update: this.update.bind(this),
     };
+  }
+
+  update() {
+    this.mounted && this.forceUpdate();
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   render() {
@@ -149,11 +165,16 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
     const { innerStyle, outerStyle } = separateInnerOuterStyles(style);
 
     return (
-      <View {...viewProps} style={outerStyle}>
+      <View
+        {...viewProps}
+        pointerEvents={pointerEvents}
+        style={[outerStyle, { backgroundColor: innerStyle.backgroundColor }]}
+      >
         {[
           ...Array.from(prevElements.values()),
           <Animated.View
             key={currentKey}
+            pointerEvents={pointerEvents}
             style={StyleSheet.flatten([
               {
                 position: 'absolute',

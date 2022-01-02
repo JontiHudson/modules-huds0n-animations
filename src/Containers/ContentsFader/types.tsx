@@ -21,12 +21,14 @@ export type Children = React.ReactNode | React.ReactNode;
 export type Dependencies = any;
 
 export type Props = ViewProps & {
-  animationDuration?: number;
   animate?: boolean;
+  animationDuration?: number;
   children?: Children;
   dependencies: Dependencies;
   easing?: (value: number) => number;
   fadeOverlap?: number;
+  onAnimationEnd?: (dependencies: Dependencies) => void;
+  onAnimationStart?: (dependencies: Dependencies) => void;
   useNativeDriver?: boolean;
 };
 
