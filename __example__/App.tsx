@@ -1,19 +1,19 @@
-import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 
-import { ContentsFaderContainer } from '@huds0n/animations';
+import { ContentsFaderContainer } from "@huds0n/animations";
 
-import AnimatedFlatList from './screens/AnimatedFlatList';
-import MoveBall from './screens/MoveBall';
-import PanHandler from './screens/PanHandler';
-import RandomAnimate from './screens/RandomAnimate';
-import TransitionContainer from './screens/TransitionContainer';
-import Welcome from './screens/Welcome';
+import AnimatedFlatList from "./screens/AnimatedFlatList";
+import MoveBall from "./screens/MoveBall";
+import PanHandler from "./screens/PanHandler";
+import RandomAnimate from "./screens/RandomAnimate";
+import TransitionContainer from "./screens/TransitionContainer";
+import Welcome from "./screens/Welcome";
 
-import { DemoState } from './state';
+import { DemoState } from "./state";
 
 export default function App() {
-  const [screen] = DemoState.useProp('screen');
+  const [screen] = DemoState.useProp("screen");
 
   const ScreenSwitch = {
     ANIMATED_FLAT_LIST: <AnimatedFlatList />,

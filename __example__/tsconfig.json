@@ -10,5 +10,6 @@
     "resolveJsonModule": true,
     "strict": true,
     "downlevelIteration": true
-  }
+  },
+  "extends": "expo/tsconfig.base"
 }
