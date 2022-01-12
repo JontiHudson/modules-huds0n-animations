@@ -56,18 +56,18 @@ A simple and declarative way to provide complex, interactive animations for **Re
 ```jsx
 <AnimatedText
   style={{
-    color: 'orange',
+    color: "orange",
     fontSize: 48,
   }}
   animate={[
     {
       to: { transform: [{ scale: 1 }] },
-      type: 'SPRING',
+      type: "SPRING",
       bounciness: 10,
       speed: 1,
     },
     {
-      to: { color: 'red' },
+      to: { color: "red" },
       duration: 150,
       loop: true,
     },
@@ -116,7 +116,7 @@ npm i @huds0n/animations
 Animated components style identically to their static counterpart. Updating _style_ will immediately change the appearance of a component.
 
 ```jsx
-import { AnimatedView } from '@huds0n/animations';
+import { AnimatedView } from "@huds0n/animations";
 
 // Inside component
 
@@ -124,7 +124,7 @@ import { AnimatedView } from '@huds0n/animations';
   style={{
     height: 50,
     width: 100,
-    backgroundColor: isSelected ? 'red' : 'blue',
+    backgroundColor: isSelected ? "red" : "blue",
   }}
 />;
 ```
@@ -141,12 +141,12 @@ Passing an [animationProps](#animation_props) into _animate_ will cause the comp
 ```jsx
 <AnimatedView
   style={{
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     width: 100,
   }}
   animate={{
     to: {
-      backgroundColor: 'red',
+      backgroundColor: "red",
       height: 50,
     },
     delay: 500,
@@ -207,7 +207,7 @@ Multiple animations can be started at once on a component. To do this simply pas
 ```jsx
 <AnimatedView
   style={{
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     width: 100,
   }}
   animate={[
@@ -217,7 +217,7 @@ Multiple animations can be started at once on a component. To do this simply pas
       duration: 1000,
     },
     {
-      to: { backgroundColor: 'red' },
+      to: { backgroundColor: "red" },
       duration: 250,
       loop: true,
     },
@@ -239,14 +239,14 @@ To stack animations pass the following [animationProps](#animation_props) as a r
   style={{
     height: 50,
     width: 100,
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
   }}
   animate={{
     to: { height: 50 },
     delay: 500,
     duration: 1000,
     onAnimationEnd: () => ({
-      to: { backgroundColor: 'red' },
+      to: { backgroundColor: "red" },
       duration: 250,
       loop: true,
     }),
@@ -266,8 +266,8 @@ To stack animations pass the following [animationProps](#animation_props) as a r
 Any component which has a style prop can be turned into an **animated component** using _createAnimatedComponent_.
 
 ```jsx
-import { Image } from 'react-native';
-import { createAnimatedComponent } from '@huds0n/animations';
+import { Image } from "react-native";
+import { createAnimatedComponent } from "@huds0n/animations";
 
 const AnimatedImage = createAnimatedComponent(Image);
 ```
@@ -281,7 +281,7 @@ For extra performance pass in the useNativeDriver prop. However, this can only w
 ```jsx
 <AnimatedView
   style={{
-    backgroundColor: 'blue',
+    backgroundColor: "blue",
     height: 100,
     width: 100,
   }}
@@ -305,15 +305,15 @@ Sometimes you may want to attach an animation to another **Animated.Value**, e.g
     at: [
       {
         input: -200,
-        style: { backgroundColor: 'blue', transform: [{ translateY: -200 }] },
+        style: { backgroundColor: "blue", transform: [{ translateY: -200 }] },
       },
       {
         input: 0,
-        style: { backgroundColor: 'black' },
+        style: { backgroundColor: "black" },
       },
       {
         input: 200,
-        style: { backgroundColor: 'red', transform: [{ translateY: 200 }] },
+        style: { backgroundColor: "red", transform: [{ translateY: 200 }] },
       },
     ],
     animatedValue: panY,
@@ -375,7 +375,7 @@ _[See example for use case with PanResponder](#example)._
 Container extending **React Native**'s **View** that smoothly animates background color.
 
 ```jsx
-<ColorFader backgroundColor={isSelected ? 'red' : 'blue'}>
+<ColorFader backgroundColor={isSelected ? "red" : "blue"}>
   // View's children
 </ColorFader>
 ```
@@ -430,7 +430,7 @@ Combines **[ColorFader](#color_fader)** and **[ContentsFader](#contents_fader)**
   }}
   dependencies={[currentButton.text]}
 >
-  <Text style={{ textAlign: 'center' }}>{currentButton.text}</Text>
+  <Text style={{ textAlign: "center" }}>{currentButton.text}</Text>
 </TransitionContainer>
 ```
 
@@ -497,7 +497,7 @@ _ElementPosition:_
           { translateX: 0 },
           { translateY: 0 },
           { scale: 1 },
-          { rotate: '0deg' },
+          { rotate: "0deg" },
         ],
       },
     },
@@ -512,7 +512,7 @@ _ElementPosition:_
           { translateX: index % 2 ? 150 : -150 },
           { translateY: -150 },
           { scale: 0 },
-          { rotate: index % 2 ? '-360deg' : '360deg' },
+          { rotate: index % 2 ? "-360deg" : "360deg" },
         ],
       },
     },
@@ -532,8 +532,6 @@ _ElementPosition:_
   style={styles.flatlist}
 />
 ```
-
-<img src="README/list.gif" width="200">
 
 <br>
 
