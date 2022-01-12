@@ -1,6 +1,6 @@
 {
   "name": "@huds0n/animations",
-  "version": "1.6.0-beta40",
+  "version": "1.6.0-beta41",
   "description": "Animates View, FlatList, and LazyList",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -19,11 +19,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@huds0n/components": "1.6.0-beta40",
-    "@huds0n/error": "1.6.0-beta40",
-    "@huds0n/lazy-list": "1.6.0-beta40",
-    "@huds0n/shared-state": "1.6.0-beta40",
-    "@huds0n/utilities": "1.6.0-beta40",
+    "@huds0n/components": "1.6.0-beta41",
+    "@huds0n/error": "1.6.0-beta41",
+    "@huds0n/lazy-list": "1.6.0-beta41",
+    "@huds0n/shared-state": "1.6.0-beta41",
+    "@huds0n/utilities": "1.6.0-beta41",
     "tslib": "^2.3.1"
   },
   "devDependencies": {
