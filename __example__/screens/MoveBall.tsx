@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Easing, StyleSheet, View } from 'react-native';
+import React, { useState } from "react";
+import { Easing, StyleSheet, View } from "react-native";
 
-import { AnimatedView } from '@huds0n/animations';
-import { Button, Icon } from '@huds0n/components';
+import { AnimatedView } from "@huds0n/animations";
+import { Button, Icon } from "@huds0n/components";
 
-import { DemoState } from '../state';
+import { DemoState } from "../state";
 
 export default function MoveBall() {
   const [top, setTop] = useState(0);
@@ -13,7 +13,7 @@ export default function MoveBall() {
   const whileUpPress = () => {
     const interval = setInterval(
       () => setTop((currentTop) => currentTop - 10),
-      100,
+      100
     );
     return () => {
       clearInterval(interval);
@@ -23,7 +23,7 @@ export default function MoveBall() {
   const whileDownPress = () => {
     const interval = setInterval(
       () => setTop((currentTop) => currentTop + 10),
-      100,
+      100
     );
     return () => {
       clearInterval(interval);
@@ -33,7 +33,7 @@ export default function MoveBall() {
   const whileLeftPress = () => {
     const interval = setInterval(
       () => setLeft((currentLeft) => currentLeft - 10),
-      100,
+      100
     );
     return () => {
       clearInterval(interval);
@@ -43,14 +43,14 @@ export default function MoveBall() {
   const whileRightPress = () => {
     const interval = setInterval(
       () => setLeft((currentLeft) => currentLeft + 10),
-      100,
+      100
     );
     return () => {
       clearInterval(interval);
     };
   };
 
-  const backPress = () => DemoState.setProp('screen', 'WELCOME');
+  const backPress = () => DemoState.setProp("screen", "WELCOME");
 
   return (
     <>
@@ -74,7 +74,7 @@ export default function MoveBall() {
 }
 
 const colors = {
-  RED: 'red',
+  RED: "red",
 };
 
 const styles = StyleSheet.create({
@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
   backButton: {
     bottom: 10,
     left: 10,
-    position: 'absolute',
+    position: "absolute",
   },
   contentsContainer: {
     flex: 1,
   },
   controlsContainer: {
-    alignSelf: 'center',
+    alignSelf: "center",
     borderRadius: 20,
     borderWidth: 1,
     height: 120,
@@ -101,40 +101,40 @@ const styles = StyleSheet.create({
   },
 });
 
-const icons = Icon.createSheet({
+const icons = {
   base: {
-    set: 'AntDesign',
+    set: "AntDesign",
     size: 40,
   },
   down: {
-    name: 'caretdown',
+    name: "caretdown",
     containerStyle: {
-      alignSelf: 'center',
+      alignSelf: "center",
       marginTop: 80,
-      position: 'absolute',
+      position: "absolute",
     },
   },
   left: {
-    name: 'caretleft',
+    name: "caretleft",
     containerStyle: {
-      alignSelf: 'flex-start',
+      alignSelf: "flex-start",
       marginTop: 40,
-      position: 'absolute',
+      position: "absolute",
     },
   },
   right: {
-    name: 'caretright',
+    name: "caretright",
     containerStyle: {
-      alignSelf: 'flex-end',
+      alignSelf: "flex-end",
       marginTop: 40,
-      position: 'absolute',
+      position: "absolute",
     },
   },
   up: {
-    name: 'caretup',
+    name: "caretup",
     containerStyle: {
-      alignSelf: 'center',
-      position: 'absolute',
+      alignSelf: "center",
+      position: "absolute",
     },
   },
-});
+} as const;

@@ -1,11 +1,12 @@
-import { getTinyColor, mapObject } from '@huds0n/utilities';
+import { getTinyColor, mapObject } from "@huds0n/utilities";
 
-import { Color, RGBA } from './types';
+type Color = string | null | undefined;
+type RGBA = { r: number; g: number; b: number; a: number };
 
 export function getStartNumber(
   oldStart: number,
   oldEnd: number,
-  progress: number,
+  progress: number
 ) {
   return (oldEnd - oldStart) * progress + oldStart;
 }
@@ -14,7 +15,7 @@ export function getStartString(
   oldStart: string,
   oldEnd: string,
   progress: number,
-  suffix: string,
+  suffix: string
 ) {
   const oldStartNumber = toNumber(oldStart, suffix);
   const oldEndNumber = toNumber(oldEnd, suffix);
@@ -31,7 +32,7 @@ function toNumber(string: string, suffix: string) {
 }
 
 const TRANSPARENT_RGBA = { r: 0, g: 0, b: 0, a: 0 };
-export const TRANSPARENT_STRING = 'rgba(0,0,0,0)';
+export const TRANSPARENT_STRING = "rgba(0,0,0,0)";
 
 function toRGBA(color: Color): RGBA {
   return getTinyColor(color || undefined)?.toRgb() || TRANSPARENT_RGBA;
@@ -49,7 +50,7 @@ export function getStartColor(
   oldStart: string,
   oldEnd: string,
   progress: number,
-  newColor: Color,
+  newColor: Color
 ) {
   const oldStartRGBA = toRGBA(oldStart);
   const oldEndRGBA = toRGBA(oldEnd);

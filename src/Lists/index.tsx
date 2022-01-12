@@ -1,18 +1,18 @@
-import React from 'react';
-import { Animated, ListRenderItemInfo, View, ViewProps } from 'react-native';
+import React from "react";
+import { Animated, ListRenderItemInfo, View, ViewProps } from "react-native";
 
-import { FlatList } from '@huds0n/components';
+import { FlatList } from "@huds0n/components";
 import {
   useAnimatedValue,
   useAnimatedCurrentValue,
   useCallback,
   useMemo,
   useState,
-} from '@huds0n/utilities';
+} from "@huds0n/utilities";
 
-import { AnimatedView } from '../Containers';
+import { AnimatedView } from "../Containers";
 
-import * as Types from './types';
+import type { Types } from "../types";
 
 type State = {
   refs: {
@@ -30,7 +30,7 @@ type State = {
   flatListLength: number;
 };
 
-type SetStateFn = (stateFn: (state: State) => State) => void;
+type SetState = (setState: (state: State) => State) => void;
 
 export function AnimatedList(props: Types.ListProps) {
   const [state, setState] = handleState(props);
@@ -43,7 +43,7 @@ function handleState({
   horizontal,
   contentOffset,
   offsetAnim = new Animated.Value(
-    (horizontal ? contentOffset?.x : contentOffset?.y) || 0,
+    (horizontal ? contentOffset?.x : contentOffset?.y) || 0
   ),
 }: Types.ListProps) {
   const animationAnim = useAnimatedValue(-10000);
@@ -53,7 +53,7 @@ function handleState({
   return useState<State>(() => ({
     refs: {
       AnimatedListComponent: Animated.createAnimatedComponent(
-        ListComponent || FlatList,
+        ListComponent || FlatList
       ),
       animationAnim,
       animationValue,
@@ -70,7 +70,7 @@ function handleState({
 function handleRender(
   props: Types.ListProps,
   state: State,
-  setState: SetStateFn,
+  setState: SetState
 ) {
   const {
     headerOffset,
@@ -92,11 +92,11 @@ function handleRender(
   return (
     <View
       onLayout={handleLayout(props, setState)}
-      style={[{ height: '100%', width: '100%' }, style]}
+      style={[{ height: "100%", width: "100%" }, style]}
     >
       {!!flatListLength && (
         <AnimatedListComponent
-          style={{ height: '100%', width: '100%' }}
+          style={{ height: "100%", width: "100%" }}
           scrollEventThrottle={16}
           {...passedProps}
           contentOffset={contentOffset}
@@ -121,8 +121,8 @@ function handleRender(
 
 function handleLayout(
   props: Types.ListProps,
-  setState: SetStateFn,
-): ViewProps['onLayout'] {
+  setState: SetState
+): ViewProps["onLayout"] {
   return useCallback(({ nativeEvent: { layout } }) => {
     const flatListLength = props.horizontal ? layout.width : layout.height;
 
@@ -136,8 +136,8 @@ function handleLayout(
 function animateIn(
   props: Types.ListProps,
   state: State,
-  setState: SetStateFn,
-  flatListLength: number,
+  setState: SetState,
+  flatListLength: number
 ) {
   const {
     animationDuration = 2500,
@@ -174,8 +174,8 @@ function animateIn(
 
 function handleOnScroll(
   { horizontal, onScroll, useNativeDriver = false }: Types.ListProps,
-  { animationInComplete, refs: { offsetAnim } }: State,
-): Types.BaseListProps['onScroll'] {
+  { animationInComplete, refs: { offsetAnim } }: State
+): Types.BaseListProps["onScroll"] {
   return useCallback(
     (event) => {
       if (!animationInComplete) return undefined;
@@ -193,14 +193,14 @@ function handleOnScroll(
       }).start();
       onScroll?.(event);
     },
-    [animationInComplete],
+    [animationInComplete]
   );
 }
 
 function handleRenderItem(
   props: Types.ListProps,
   state: State,
-  setState: SetStateFn,
+  setState: SetState
 ) {
   const { renderItem, useNativeDriver = false } = props;
   const {
@@ -215,7 +215,7 @@ function handleRenderItem(
       const { at, over, start, end, row } = getAttachPoints(
         props,
         flatListLength,
-        info,
+        info
       );
 
       if (
@@ -260,14 +260,14 @@ function handleRenderItem(
         </AnimatedView>
       );
     },
-    [renderItem, animationInComplete, animationInStarted, flatListLength],
+    [renderItem, animationInComplete, animationInStarted, flatListLength]
   );
 }
 
 function getAttachPoints(
   { at, over, headerOffset = 0, itemLength, numColumns = 1 }: Types.ListProps,
   flatListLength: number,
-  info: ListRenderItemInfo<any>,
+  info: ListRenderItemInfo<any>
 ) {
   const { index } = info;
   const row = Math.floor(index / numColumns);
@@ -286,11 +286,11 @@ function getAttachPoints(
 
 function handleInitialOffset(
   { horizontal }: Types.ListProps,
-  { refs: { offsetValue } }: State,
+  { refs: { offsetValue } }: State
 ) {
   return useMemo(() =>
     horizontal
       ? { x: offsetValue.current, y: 0 }
-      : { x: 0, y: offsetValue.current },
+      : { x: 0, y: offsetValue.current }
   );
 }

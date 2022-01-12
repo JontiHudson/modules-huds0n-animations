@@ -1,36 +1,34 @@
-import React from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import React from "react";
+import { Animated, StyleSheet, View } from "react-native";
 
 import {
   separateInnerOuterStyles,
   shallowCompareArrays,
-} from '@huds0n/utilities';
+} from "@huds0n/utilities";
 
-import * as Types from './types';
-
-export namespace ContentsFaderContainer {
-  export type Props = Types.Props;
-  export type Component = React.ComponentClass<Props>;
-}
+import type { Types } from "../../types";
 
 type State = {
   currentAnim: Animated.Value;
   currentKey: string;
   firstMount: boolean;
   update: () => void;
-  prevChildren: Types.Children;
-  prevDependencies: Types.Dependencies;
+  prevChildren: React.ReactNode | React.ReactNode[];
+  prevDependencies: any;
   prevElements: Map<string, JSX.Element>;
 };
 
-export const ContentsFaderContainer: ContentsFaderContainer.Component = class ContentsFaderContainerComponent extends React.Component<
-  Types.Props,
+export const ContentsFaderContainer = class ContentsFaderContainerComponent extends React.Component<
+  Types.ContentsFaderContainerProps,
   State
 > {
   static DEFAULT_ANIMATION_DURATION = 500;
   static DEFAULT_FADE_OVERLAP = 1 / 3;
 
-  static getDerivedStateFromProps(props: Types.Props, state: State) {
+  static getDerivedStateFromProps(
+    props: Types.ContentsFaderContainerProps,
+    state: State
+  ) {
     const {
       currentAnim,
       currentKey,
@@ -45,7 +43,6 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
       animationDuration = ContentsFaderContainerComponent.DEFAULT_ANIMATION_DURATION,
       children,
       dependencies,
-      pointerEvents,
       fadeOverlap = ContentsFaderContainerComponent.DEFAULT_FADE_OVERLAP,
       style,
       useNativeDriver = true,
@@ -72,16 +69,16 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
             pointerEvents="none"
             style={StyleSheet.flatten([
               {
-                position: 'absolute',
-                height: '100%',
-                width: '100%',
+                position: "absolute",
+                height: "100%",
+                width: "100%",
               },
               innerStyle,
               { opacity: currentAnim },
             ])}
           >
             {prevChildren}
-          </Animated.View>,
+          </Animated.View>
         );
 
       if (animate) {
@@ -127,13 +124,13 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
 
   mounted: boolean;
 
-  constructor(props: Types.Props) {
+  constructor(props: Types.ContentsFaderContainerProps) {
     super(props);
 
     this.mounted = true;
     this.state = {
       currentAnim: new Animated.Value(0),
-      currentKey: 'INITIAL_KEY',
+      currentKey: "INITIAL_KEY",
       firstMount: true,
       prevChildren: null,
       prevDependencies: props.dependencies,
@@ -177,9 +174,9 @@ export const ContentsFaderContainer: ContentsFaderContainer.Component = class Co
             pointerEvents={pointerEvents}
             style={StyleSheet.flatten([
               {
-                position: 'absolute',
-                height: '100%',
-                width: '100%',
+                position: "absolute",
+                height: "100%",
+                width: "100%",
               },
               innerStyle,
               { opacity: currentAnim },

@@ -1,21 +1,22 @@
-import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
 
 import {
   AnimatedList,
   AnimatedText,
   AnimatedView,
   AnimationSheet,
-} from '@huds0n/animations';
-import { Button } from '@huds0n/components';
-import { useAnimatedValue } from '@huds0n/utilities';
+} from "@huds0n/animations";
+import { Button } from "@huds0n/components";
+import { useAnimatedValue } from "@huds0n/utilities";
 
-import { DemoState } from '../state';
+import { DemoState } from "../state";
+import { AttachSheet } from "../../src/AnimationSheet";
 
 export default function AnimatedFlatListScreen() {
   const offsetAnim = useAnimatedValue(0);
 
-  const backPress = () => DemoState.setProp('screen', 'WELCOME');
+  const backPress = () => DemoState.setProp("screen", "WELCOME");
 
   return (
     <View style={styles.container}>
@@ -89,37 +90,37 @@ const DEMO_DATA = [
 ];
 
 const PICTURE_URI =
-  'https://c4.wallpaperflare.com/wallpaper/500/442/354/outrun-vaporwave-hd-wallpaper-preview.jpg';
+  "https://c4.wallpaperflare.com/wallpaper/500/442/354/outrun-vaporwave-hd-wallpaper-preview.jpg";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   headerText: {
-    alignSelf: 'center',
-    textAlign: 'center',
-    backgroundColor: 'blue',
-    color: 'white',
+    alignSelf: "center",
+    textAlign: "center",
+    backgroundColor: "blue",
+    color: "white",
     fontSize: 30,
     height: 60,
     paddingTop: 10,
     paddingBottom: 10,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
-    width: '200%',
+    width: "200%",
     zIndex: 100,
   },
   footer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopWidth: 1,
     bottom: 0,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 60,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: 10,
-    position: 'absolute',
-    width: '100%',
+    position: "absolute",
+    width: "100%",
   },
   flatlist: {
     paddingTop: 30,
@@ -128,17 +129,17 @@ const styles = StyleSheet.create({
     height: 150,
     flex: 1,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   itemPicture: {
     borderWidth: 2,
-    height: '100%',
-    width: '100%',
+    height: "100%",
+    width: "100%",
   },
 });
 
-const animations = AnimationSheet.create({
+const animations = AttachSheet.create({
   header: [
     { input: 0, style: { transform: [{ translateY: 0 }, { scale: 1 }] } },
     { input: 30, style: { transform: [{ translateY: -15 }, { scale: 0.5 }] } },
@@ -166,7 +167,7 @@ const animations = AnimationSheet.create({
           { translateX: 0 },
           { translateY: 0 },
           { scale: 1 },
-          { rotate: '0deg' },
+          { rotate: "0deg" },
         ],
       },
     },
@@ -179,7 +180,7 @@ const animations = AnimationSheet.create({
           { translateX: index % 2 ? 150 : -150 },
           { translateY: -150 },
           { scale: 0 },
-          { rotate: index % 2 ? '-360deg' : '360deg' },
+          { rotate: index % 2 ? "-360deg" : "360deg" },
         ],
       },
     },

@@ -1,21 +1,29 @@
-import { useAnimatorStyle } from './AnimatorStyle';
-import { ElementPosition } from './Lists/types';
+import type { Types } from "./types";
 
 export const AnimationSheet = {
   create: <
     A extends {
-      [name: string]:
-        | useAnimatorStyle.AnimationProp
-        | useAnimatorStyle.AttachProp['at']
-        | useAnimatorStyle.AttachProp['over']
-        | ((
-            elementPosition: ElementPosition,
-          ) => useAnimatorStyle.AttachProp['at'])
-        | ((
-            elementPosition: ElementPosition,
-          ) => useAnimatorStyle.AttachProp['over']);
+      [name: string]: Types.AnimationProp | Types.LayoutAnimationProp;
     }
   >(
-    animation: A,
+    animation: A
+  ) => animation,
+};
+
+export const AttachSheet = {
+  create: <
+    A extends {
+      [name: string]:
+        | Types.AttachPoint[]
+        | Types.AttachFunction
+        | ((
+            elementPosition: Types.ListElementAttachPosition
+          ) => Types.AttachPoint[])
+        | ((
+            elementPosition: Types.ListElementAttachPosition
+          ) => Types.AttachFunction);
+    }
+  >(
+    animation: A
   ) => animation,
 };

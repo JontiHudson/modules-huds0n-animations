@@ -1,52 +1,52 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 import {
   AnimatedText,
   AnimatedView,
   AnimationSheet,
   TransitionContainer,
-} from '@huds0n/animations';
-import { Button, Pressable } from '@huds0n/components';
+} from "@huds0n/animations";
+import { Button, Pressable } from "@huds0n/components";
 
-import { DemoState } from '../state';
+import { DemoState } from "../state";
 
 export default function Welcome() {
   const [buttonId, setButtonId] = useState(0);
 
   const menuButtons = [
     {
-      text: 'Animated List',
+      text: "Animated List",
       onPress: () => {
-        DemoState.setProp('screen', 'ANIMATED_FLAT_LIST');
+        DemoState.setProp("screen", "ANIMATED_FLAT_LIST");
       },
       backgroundColor: colors.PEACH,
     },
     {
-      text: 'Move Ball',
+      text: "Move Ball",
       onPress: () => {
-        DemoState.setProp('screen', 'MOVE_BALL');
+        DemoState.setProp("screen", "MOVE_BALL");
       },
       backgroundColor: colors.LIGHT_GREEN,
     },
     {
-      text: 'Panhandler',
+      text: "Panhandler",
       onPress: () => {
-        DemoState.setProp('screen', 'PANHANDLER');
+        DemoState.setProp("screen", "PANHANDLER");
       },
       backgroundColor: colors.NAVY,
     },
     {
-      text: 'Random Animate',
+      text: "Random Animate",
       onPress: () => {
-        DemoState.setProp('screen', 'RANDOM_ANIMATE');
+        DemoState.setProp("screen", "RANDOM_ANIMATE");
       },
       backgroundColor: colors.PEACH,
     },
     {
-      text: 'Transition Container',
+      text: "Transition Container",
       onPress: () => {
-        DemoState.setProp('screen', 'TRANSITION_CONTAINER');
+        DemoState.setProp("screen", "TRANSITION_CONTAINER");
       },
       backgroundColor: colors.LIGHT_BLUE,
     },
@@ -56,13 +56,13 @@ export default function Welcome() {
 
   const prevPress = () => {
     setButtonId((currentId) =>
-      currentId > 0 ? currentId - 1 : menuButtons.length - 1,
+      currentId > 0 ? currentId - 1 : menuButtons.length - 1
     );
   };
 
   const nextPress = () => {
     setButtonId((currentId) =>
-      currentId < menuButtons.length - 1 ? currentId + 1 : 0,
+      currentId < menuButtons.length - 1 ? currentId + 1 : 0
     );
   };
 
@@ -123,22 +123,22 @@ export default function Welcome() {
 }
 
 const colors = {
-  ORANGE: '#990000',
-  RED: '#ffa500',
-  TEAL: '#20b2aa',
-  NAVY: '#468499',
-  PEACH: '#faebd7',
-  LIGHT_GREEN: '#dcedc1',
-  LIGHT_BLUE: '#c0d6e4',
+  ORANGE: "#990000",
+  RED: "#ffa500",
+  TEAL: "#20b2aa",
+  NAVY: "#468499",
+  PEACH: "#faebd7",
+  LIGHT_GREEN: "#dcedc1",
+  LIGHT_BLUE: "#c0d6e4",
 };
 
 const styles = StyleSheet.create({
   footer: {
-    position: 'absolute',
-    flexDirection: 'row',
+    position: "absolute",
+    flexDirection: "row",
     bottom: 0,
     height: 60,
-    width: '100%',
+    width: "100%",
     transform: [{ translateY: 60 }],
   },
   footerCenterButton: {
@@ -148,12 +148,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   footerCenterButtonContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 2,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   footerCenterButtonText: {
-    textAlign: 'center',
+    textAlign: "center",
   },
 
   footerSideButton: {
@@ -161,11 +161,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   textContainer: {
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
-    position: 'absolute',
-    width: '100%',
+    alignItems: "center",
+    height: "100%",
+    justifyContent: "center",
+    position: "absolute",
+    width: "100%",
   },
   textStart: {
     color: colors.ORANGE,
@@ -183,7 +183,7 @@ const animations = AnimationSheet.create({
   },
   textPopIn: {
     to: { transform: [{ scale: 1 }] },
-    type: 'SPRING',
+    type: "SPRING" as const,
     bounciness: 10,
     speed: 1,
   },

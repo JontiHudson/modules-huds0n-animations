@@ -1,59 +1,22 @@
-import React, {
-  PropsWithChildren,
-  useImperativeHandle,
-  RefObject,
-} from 'react';
-import { Animated, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import React, { useImperativeHandle } from "react";
+import { Animated, StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-import { toArray, useEffect, usePrev, useRef } from '@huds0n/utilities';
+import {
+  measureNodeAsync,
+  toArray,
+  useEffect,
+  usePrev,
+  useRef,
+} from "@huds0n/utilities";
 
-import { useAnimatorStyle } from '../../AnimatorStyle';
-
-export namespace createAnimatedComponent {
-  type ExtractRef<P extends {}> = P extends { ref?: RefObject<infer R> }
-    ? R
-    : {};
-
-  export type AnimatedRef<C extends React.ComponentType<any>> = {
-    animate: (animation: useAnimatorStyle.AnimationProp) => void;
-    attach: (attach: useAnimatorStyle.AttachProp) => void;
-    setStyle: (style: StyleProp<ViewStyle>) => void;
-  } & (C extends new (...args: any) => any
-    ? InstanceType<C>
-    : C extends React.ComponentType<infer P>
-    ? ExtractRef<P>
-    : {});
-
-  export type AnimationProp = useAnimatorStyle.AnimationProp;
-
-  export type AttachProp = useAnimatorStyle.AttachProp;
-
-  export type AnimatedProps<P extends {}> = PropsWithChildren<P> &
-    Omit<useAnimatorStyle.Options, 'animateOnMount' | 'initialStyle'> & {
-      animate?: AnimationProp;
-      attach?: AttachProp;
-    };
-
-  export type Animated<C extends React.ComponentType<any>> =
-    C extends React.ComponentType<infer P>
-      ? React.ForwardRefExoticComponent<
-          React.PropsWithoutRef<AnimatedProps<P>> &
-            React.RefAttributes<AnimatedRef<C>>
-        >
-      : never;
-
-  export type Animation = useAnimatorStyle.Animation;
-  export type DefaultConfig = useAnimatorStyle.DefaultConfig;
-  export type Loop = useAnimatorStyle.Loop;
-  export type OnAnimationEndFn = useAnimatorStyle.OnAnimationEndFn;
-  export type OnAnimationStartFn = useAnimatorStyle.OnAnimationStartFn;
-}
+import { useAnimatorStyle } from "../../AnimatorStyle";
+import type { Types } from "../../types";
 
 function ensureClassComponent<P>(
-  Component: ((props: P & any) => React.ReactElement) | React.ComponentType<P>,
+  Component: ((props: P & any) => React.ReactElement) | React.ComponentType<P>
 ): React.ComponentType<any> {
   if (
-    typeof Component === 'function' &&
+    typeof Component === "function" &&
     !!Component.prototype.isReactComponent
   ) {
     return Component;
@@ -74,24 +37,26 @@ function ensureClassComponent<P>(
 export function createAnimatedComponent<
   C extends ((props: P & any) => React.ReactElement) | React.ComponentType<P>,
   P extends { style?: S },
-  S extends StyleProp<ViewStyle>,
->(Component: C): createAnimatedComponent.Animated<C> {
+  S extends StyleProp<ViewStyle>
+>(Component: C): Types.AnimatedComponent<C> {
   const AnimatedComponent = Animated.createAnimatedComponent(
-    ensureClassComponent(Component),
+    ensureClassComponent(Component)
   );
 
   // @ts-ignore
-  return React.forwardRef<any, createAnimatedComponent.AnimatedProps<P>>(
+  return React.forwardRef<
+    Types.AnimatedComponentRef<C>,
+    Types.AnimatedComponentProps<P>
+  >(
     (
-      { attach, defaultConfig, useNativeDriver, style, animate, ...props },
-      ref,
+      { attach, defaultAnimation, useNativeDriver, style, animate, ...props },
+      ref
     ) => {
       const copiedRef = useRef<any>(null);
 
       const AnimatorStyle = useAnimatorStyle({
-        defaultConfig,
+        defaultAnimation,
         initialStyle: style,
-
         useNativeDriver,
       });
 
@@ -100,7 +65,7 @@ export function createAnimatedComponent<
           attach && AnimatorStyle.attach(attach);
         },
         [attach?.animatedValue, JSON.stringify(attach), attach?.deps],
-        { layout: 'BEFORE' },
+        { layout: "BEFORE" }
       );
 
       const prevStyle = usePrev(style) || {};
@@ -111,25 +76,42 @@ export function createAnimatedComponent<
             const changedStyle = Object.fromEntries(
               Object.entries(StyleSheet.flatten(style)).filter(
                 // @ts-ignore
-                ([key, prop]) => prop !== StyleSheet.flatten(prevStyle)[key],
-              ),
+                ([key, prop]) => prop !== StyleSheet.flatten(prevStyle)[key]
+              )
             );
 
             AnimatorStyle.setStyle(changedStyle);
           }
         },
         [JSON.stringify(style)],
-        { layout: 'BEFORE', skipMounts: true },
+        { layout: "BEFORE", skipMounts: true }
+      );
+
+      const animationChangeDep =
+        typeof animate === "function"
+          ? animate
+          : animate && JSON.stringify(toArray(animate).map((a) => a.to));
+
+      useEffect(
+        () => {
+          if (!animate || typeof animate === "function") return;
+
+          AnimatorStyle.animate(animate);
+        },
+        [animationChangeDep],
+        { layout: "BEFORE" }
       );
 
       useEffect(
         () => {
-          if (!animate) return;
-
-          AnimatorStyle.animate(animate);
+          if (typeof animate === "function") {
+            measureNodeAsync(copiedRef.current).then((layout) => {
+              AnimatorStyle.animate(animate(layout));
+            });
+          }
         },
-        [animate && JSON.stringify(toArray(animate).map((a) => a.to))],
-        { layout: 'BEFORE' },
+        [animationChangeDep],
+        { layout: "AFTER" }
       );
 
       useImperativeHandle(
@@ -140,7 +122,7 @@ export function createAnimatedComponent<
             animate: AnimatorStyle.animate,
             attach: AnimatorStyle.attach,
             setStyle: AnimatorStyle.setStyle,
-          } as createAnimatedComponent.AnimatedRef<C>),
+          } as Types.AnimatedComponentRef<C>)
       );
 
       return (
@@ -151,6 +133,6 @@ export function createAnimatedComponent<
           style={AnimatorStyle.style}
         />
       );
-    },
+    }
   );
 }

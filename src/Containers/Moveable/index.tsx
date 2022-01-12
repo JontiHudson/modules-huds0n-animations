@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useRef } from "react";
-import { Animated, Easing, PanResponder, ViewProps } from "react-native";
+import { Animated, Easing, PanResponder } from "react-native";
 
 import {
   useAnimatedCurrentValue,
@@ -8,6 +8,8 @@ import {
   useMemo,
   useState,
 } from "@huds0n/utilities";
+
+import type { Types } from "../../types";
 
 function limitNum(source: number, limit: [number, number]) {
   if (source < limit[0]) return limit[0];
@@ -21,34 +23,9 @@ function closestNum(source: number, arr: number[]) {
   );
 }
 
-export namespace MoveableView {
-  export type Coordinates = { x: number; y: number };
-  export type Props = ViewProps & {
-    children?: React.ReactNode;
-    onMoveStart?: (coordinates: Coordinates) => any;
-    onMoveEnd?: (coordinates: Coordinates) => any;
-    onRelease?: (coordinates: Coordinates) => any;
-    enable?: boolean;
-    limitX?: [number, number];
-    limitY?: [number, number];
-    snapX?: number[];
-    snapY?: number[];
-    useNativeDriver?: boolean;
-  };
-
-  export type SnapAnimation = false | number | "SPRING";
-
-  export type Ref = {
-    currentCoordinates: Coordinates;
-    pan: Animated.ValueXY;
-    snapTo: (coordinates: Coordinates, animate?: SnapAnimation) => void;
-    snapToClosest: () => Coordinates;
-  };
-}
-
 export const MoveableView = React.forwardRef<
-  MoveableView.Ref,
-  MoveableView.Props
+  Types.MoveableRef,
+  Types.MoveableProps
 >(
   (
     {
@@ -95,11 +72,8 @@ export const MoveableView = React.forwardRef<
       { layout: "BEFORE" }
     );
 
-    const snapTo = useCallback(
-      (
-        toValue: MoveableView.Coordinates,
-        animate: MoveableView.SnapAnimation = "SPRING"
-      ) => {
+    const snapTo: Types.MoveableRef["snapTo"] = useCallback(
+      (toValue, animate = "SPRING") => {
         // Stops unneeded animation when movements are small
         const atPosition =
           Math.round(currentCoordinates.x) === toValue.x &&

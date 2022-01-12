@@ -1,20 +1,13 @@
-import React from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import React from "react";
+import { Animated, StyleSheet } from "react-native";
 
-import { useEffect } from '@huds0n/utilities';
+import { useEffect } from "@huds0n/utilities";
 
-import { useAnimatorStyle } from '../../AnimatorStyle';
+import { useAnimatorStyle } from "../../AnimatorStyle";
 
-import * as Types from './types';
+import type { Types } from "../../types";
 
-export namespace ColorFaderContainer {
-  export type Children = Types.Children;
-  export type Props = Types.Props;
-
-  export type Component = React.FunctionComponent<Props>;
-}
-
-export function ColorFaderContainer(props: ColorFaderContainer.Props) {
+export function ColorFaderContainer(props: Types.ColorFaderContainerProps) {
   const {
     animate = true,
     animation,
@@ -43,7 +36,7 @@ export function ColorFaderContainer(props: ColorFaderContainer.Props) {
         });
     },
     [backgroundColor],
-    { layout: 'BEFORE', skipMounts: true },
+    { layout: "BEFORE", skipMounts: true }
   );
 
   return (

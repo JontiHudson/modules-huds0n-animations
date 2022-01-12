@@ -5,10 +5,10 @@ import {
   StyleSheet,
   TextStyle,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 
-import Huds0nError from '@huds0n/error';
-import { mapObject, toArray } from '@huds0n/utilities';
+import Huds0nError from "@huds0n/error";
+import { mapObject, toArray } from "@huds0n/utilities";
 
 import {
   colorToRGBAString,
@@ -16,28 +16,38 @@ import {
   getStartColor,
   getStartString,
   TRANSPARENT_STRING,
-} from './helpers';
-import {
-  Animation,
-  AnimationProp,
-  AnimationStyle,
-  AnimationTransform,
-  AnimationValues,
-  AnimationValueStore,
-  AttachProp,
-  AttachPoint,
-  AttachStyle,
-  ClassOptions,
-  DefaultConfig,
-  EasingFn,
-  ForceUpdateFn,
-  StyleType,
-} from './types';
+} from "./helpers";
 
-if (Platform.OS !== 'web') {
-  require('react-native').LogBox.ignoreLogs([
+import type { Types } from "../types";
+
+if (Platform.OS !== "web") {
+  require("react-native").LogBox.ignoreLogs([
     `Trying to remove a child that doesn't exist`,
   ]);
+}
+
+type AnimationStyle = Animated.WithAnimatedValue<ViewStyle>;
+type AnimationTransform = Record<string, any>;
+
+type AnimationValues = {
+  animatedValue: Animated.Value;
+  interpolation: Animated.AnimatedInterpolation;
+  outputRange: any[] | null;
+};
+type AnimationValueStore = Record<string, AnimationValues>;
+
+type AttachStyle = {
+  [styleProps: string]: {
+    input: number;
+    value: any;
+  }[];
+};
+
+export enum StyleType {
+  Number = 0,
+  Color = 1,
+  Percentage = 2,
+  Degrees = 3,
 }
 
 export class AnimatorStyle {
@@ -50,8 +60,8 @@ export class AnimatorStyle {
   }
 
   private _animatedValueProgress: Map<Animated.Value, number>;
-  private _defaultConfig: DefaultConfig;
-  private _forceUpdateFn: ForceUpdateFn;
+  private _defaultAnimation: Types.DefaultAnimation | undefined;
+  private _forceUpdateFn: () => void;
   private _style: AnimationStyle;
   private _styleAnim: AnimationValueStore;
   private _transform: AnimationTransform;
@@ -59,22 +69,22 @@ export class AnimatorStyle {
   private _useNativeDriver: boolean;
 
   private static _transformArrayToObj(
-    transformArray: AnimationStyle['transform'] = [],
+    transformArray: AnimationStyle["transform"] = []
   ): AnimationTransform {
     return transformArray.reduce((acc, t) => ({ ...acc, ...t }), {});
   }
 
   constructor({
     animateOnMount,
-    defaultConfig,
+    defaultAnimation,
     initialStyle = {},
     forceUpdateFn,
     useNativeDriver = false,
-  }: ClassOptions) {
+  }: Types.AnimatorStyleOptions) {
     const { transform, ...style } = StyleSheet.flatten(initialStyle);
 
     this._animatedValueProgress = new Map();
-    this._defaultConfig = defaultConfig;
+    this._defaultAnimation = defaultAnimation;
     this._forceUpdateFn = forceUpdateFn;
     this._style = style;
     this._styleAnim = {};
@@ -96,7 +106,7 @@ export class AnimatorStyle {
     const transform: any = Object.entries(this._transform).map(
       ([key, value]) => ({
         [key]: value,
-      }),
+      })
     );
 
     return { ...this._style, transform };
@@ -116,11 +126,15 @@ export class AnimatorStyle {
 
   // Animate Methods
 
-  animate(animation: AnimationProp) {
-    const animations = toArray(animation);
+  animate(animation: Types.AnimationProp) {
+    const animations = toArray(animation).map((a) => ({
+      ...this._defaultAnimation,
+      ...a,
+    }));
+
     animations.forEach((a) => {
       const animatedValue = this._handleAnimation(
-        StyleSheet.flatten(a.to || {}),
+        StyleSheet.flatten(a.to || {})
       );
       this._handleAnimatedValue(a, animatedValue);
     });
@@ -136,7 +150,7 @@ export class AnimatorStyle {
 
   private _handleAnimation(
     to: TextStyle,
-    animatedValue = new Animated.Value(0),
+    animatedValue = new Animated.Value(0)
   ) {
     this._handleAnimateStyle(to, animatedValue);
     this._handleAnimateTransform(to, animatedValue);
@@ -170,7 +184,7 @@ export class AnimatorStyle {
 
   private _handleAnimateTransform(
     to: TextStyle,
-    animatedValue: Animated.Value,
+    animatedValue: Animated.Value
   ) {
     const { transform } = to;
 
@@ -181,7 +195,7 @@ export class AnimatorStyle {
         transformObj,
         this._transformAnim,
         this._transform,
-        animatedValue,
+        animatedValue
       );
 
       this._transform = {
@@ -199,20 +213,22 @@ export class AnimatorStyle {
     styleProps: { [prop: string]: any },
     valueStore: AnimationValueStore,
     styleStore: any,
-    animatedValue: Animated.Value,
+    animatedValue: Animated.Value
   ) {
     Object.entries(styleProps).forEach(([styleKey, endValue]) => {
       let startValue;
 
       let styleType = StyleType.Number;
 
-      if (styleKey.match('color') || styleKey.match('Color')) {
+      if (styleKey.match("color") || styleKey.match("Color")) {
         styleType = StyleType.Color;
-      } else if (typeof endValue === 'string') {
-        if (endValue.match('%')) {
+      } else if (typeof endValue === "string") {
+        if (endValue.match("%")) {
           styleType = StyleType.Percentage;
-        } else if (endValue.match('deg')) {
+        } else if (endValue.match("deg")) {
           styleType = StyleType.Degrees;
+        } else {
+          return;
         }
       }
 
@@ -240,18 +256,18 @@ export class AnimatorStyle {
                   oldStart,
                   oldEnd,
                   progress,
-                  endValue,
+                  endValue
                 );
                 endValue = colorToRGBAString(endValue);
 
                 break;
 
               case StyleType.Percentage:
-                startValue = getStartString(oldStart, oldEnd, progress, '%');
+                startValue = getStartString(oldStart, oldEnd, progress, "%");
                 break;
 
               case StyleType.Degrees:
-                startValue = getStartString(oldStart, oldEnd, progress, 'deg');
+                startValue = getStartString(oldStart, oldEnd, progress, "deg");
                 break;
             }
           }
@@ -281,11 +297,11 @@ export class AnimatorStyle {
               break;
 
             case StyleType.Percentage:
-              startValue = styleStore[styleKey] || '0%';
+              startValue = styleStore[styleKey] || "0%";
               break;
 
             case StyleType.Degrees:
-              startValue = styleStore[styleKey] || '0deg';
+              startValue = styleStore[styleKey] || "0deg";
               break;
           }
 
@@ -304,10 +320,10 @@ export class AnimatorStyle {
         }
       } catch (e) {
         throw Huds0nError.transform(e, {
-          name: 'Animation Style Handler Error',
-          code: 'INITIALIZE_STYLE_ERROR',
+          name: "Animation Style Handler Error",
+          code: "INITIALIZE_STYLE_ERROR",
           message: `Style prop ${styleKey} could not be interpolated. Please check start and end values`,
-          severity: 'MEDIUM',
+          severity: "MEDIUM",
           info: {
             currentStyle: this._style,
             endValue,
@@ -320,12 +336,12 @@ export class AnimatorStyle {
   }
 
   private _handleAnimatedValue(
-    animation: Animation,
-    animatedValue: Animated.Value,
+    animation: Types.Animation,
+    animatedValue: Animated.Value
   ) {
     const animationCallback = this._getAnimationCallback(
       animation,
-      animatedValue,
+      animatedValue
     );
 
     const composite = this._getCompositeAnimation(animation, animatedValue);
@@ -334,13 +350,13 @@ export class AnimatorStyle {
   }
 
   private _getAnimationCallback(
-    animation: Animation,
-    animatedValue: Animated.Value,
+    animation: Types.Animation,
+    animatedValue: Animated.Value
   ) {
     return () => {
       const attachedProps = this._getAnimatedValueAttachedProps(animatedValue);
 
-      if (typeof animation.loop === 'number') {
+      if (typeof animation.loop === "number") {
         animation.loop = animation.loop - 0.5;
       }
 
@@ -374,38 +390,43 @@ export class AnimatorStyle {
     return [...styleProps, ...transformProps];
   }
 
-  private _shouldRepeat({ loop }: Animation) {
+  private _shouldRepeat({ loop }: Types.Animation) {
     return (
       loop === true ||
-      (typeof loop === 'number' && loop > 0) ||
-      (typeof loop === 'object' && loop.current)
+      (typeof loop === "number" && loop > 0) ||
+      (typeof loop === "object" && loop.current)
     );
   }
 
   private _getCompositeAnimation(
-    animation: Animation,
-    animatedValue: Animated.Value,
+    animation: Types.Animation,
+    animatedValue: Animated.Value
   ) {
     const progress = this._animatedValueProgress.get(animatedValue) || 0;
 
     const toValue = progress < 0.5 ? 1 : 0;
 
-    return (
-      animation.type === 'DECAY'
-        ? Animated.decay
-        : animation.type === 'SPRING'
-        ? Animated.spring
-        : Animated.timing
-    )(animatedValue, {
+    const config = {
       duration: AnimatorStyle.DEFAULT_DURATION,
       // @ts-ignore
       velocity:
-        animation.type === 'DECAY' ? AnimatorStyle.DEFAULT_VELOCITY : undefined,
-      ...this._defaultConfig,
+        animation.type === "DECAY" ? AnimatorStyle.DEFAULT_VELOCITY : undefined,
       ...animation,
       toValue,
       useNativeDriver: this._useNativeDriver,
-    });
+    };
+
+    return (
+      config.type === "DECAY"
+        ? Animated.decay
+        : config.type === "SPRING"
+        ? Animated.spring
+        : Animated.timing
+    )(
+      animatedValue,
+      // @ts-ignore
+      config
+    );
   }
 
   removeAllListeners() {
@@ -416,7 +437,7 @@ export class AnimatorStyle {
 
   // Attach Methods
 
-  attach(attachProp: AttachProp) {
+  attach(attachProp: Types.AttachProp) {
     const animatedValue = this._handleAttachedValue(attachProp);
 
     const at = this._handleAt(attachProp);
@@ -431,8 +452,8 @@ export class AnimatorStyle {
     return animatedValue;
   }
 
-  private _handleAttachedValue({ animatedValue, spring }: AttachProp) {
-    if (typeof animatedValue === 'number') {
+  private _handleAttachedValue({ animatedValue, spring }: Types.AttachProp) {
+    if (typeof animatedValue === "number") {
       return new Animated.Value(animatedValue);
     }
 
@@ -445,24 +466,24 @@ export class AnimatorStyle {
 
     Animated.spring(linkAnimatedValue, {
       useNativeDriver: this._useNativeDriver,
-      ...(typeof spring === 'object' && { spring }),
+      ...(typeof spring === "object" && { spring }),
       toValue: animatedValue,
     }).start();
 
     return linkAnimatedValue;
   }
 
-  private _handleAt({ at = [], over }: AttachProp) {
+  private _handleAt({ at = [], over }: Types.AttachProp) {
     if (!over) {
       return at.sort((a, b) => a.input - b.input);
     }
 
     if (over.points < 2) {
       throw new Huds0nError({
-        name: 'Animation Style Handler Error',
-        code: 'INSUFFICIENT_OVER_POINTS',
+        name: "Animation Style Handler Error",
+        code: "INSUFFICIENT_OVER_POINTS",
         message: `At least 2 points are required to attach over`,
-        severity: 'MEDIUM',
+        severity: "MEDIUM",
       });
     }
 
@@ -488,8 +509,8 @@ export class AnimatorStyle {
 
   private _handleAttachStyle(
     animatedValue: Animated.Value,
-    at: AttachPoint[],
-    easing?: EasingFn,
+    at: Types.AttachPoint[],
+    easing?: Types.EasingFunction
   ) {
     const stylePoints = at.reduce<AttachStyle>((acc, a) => {
       const { transform, ...style } = StyleSheet.flatten(a.style);
@@ -506,7 +527,7 @@ export class AnimatorStyle {
       stylePoints,
       this._styleAnim,
       animatedValue,
-      easing,
+      easing
     );
 
     Object.entries(this._styleAnim).forEach(([key, { interpolation }]) => {
@@ -517,8 +538,8 @@ export class AnimatorStyle {
 
   private _handleAttachTransform(
     animatedValue: Animated.Value,
-    at: AttachPoint[],
-    easing?: EasingFn,
+    at: Types.AttachPoint[],
+    easing?: Types.EasingFunction
   ) {
     const transformPoints = at.reduce<AttachStyle>((acc, a) => {
       const { transform } = StyleSheet.flatten(a.style);
@@ -541,7 +562,7 @@ export class AnimatorStyle {
       transformPoints,
       this._transformAnim,
       animatedValue,
-      easing,
+      easing
     );
 
     this._transform = {
@@ -558,7 +579,7 @@ export class AnimatorStyle {
     attachStyle: AttachStyle,
     valueStore: AnimationValueStore,
     animatedValue: Animated.Value,
-    easing?: EasingFn,
+    easing?: Types.EasingFunction
   ) {
     Object.entries(attachStyle).forEach(([styleKey, positionValues]) => {
       try {
@@ -575,7 +596,7 @@ export class AnimatorStyle {
           return;
         }
 
-        const isColor = styleKey.match('color') || styleKey.match('Color');
+        const isColor = styleKey.match("color") || styleKey.match("Color");
 
         const inputRange = positionValues.map((p) => p.input);
         const outputRange = isColor
@@ -585,7 +606,7 @@ export class AnimatorStyle {
         const interpolation = animatedValue.interpolate({
           inputRange,
           outputRange,
-          extrapolate: 'clamp',
+          extrapolate: "clamp",
           ...(easing && { easing }),
         });
 
@@ -596,10 +617,10 @@ export class AnimatorStyle {
         };
       } catch (e) {
         throw Huds0nError.transform(e, {
-          name: 'Animation Style Handler Error',
-          code: 'INITIALIZE_STYLE_ERROR',
+          name: "Animation Style Handler Error",
+          code: "INITIALIZE_STYLE_ERROR",
           message: `Style prop ${styleKey} could not be interpolated. Please check start and end values`,
-          severity: 'MEDIUM',
+          severity: "MEDIUM",
           info: {
             currentStyle: this._style,
             key: styleKey,

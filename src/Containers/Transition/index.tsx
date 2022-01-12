@@ -1,25 +1,16 @@
-import React from 'react';
-import { Animated, Dimensions, View } from 'react-native';
+import React from "react";
+import { Animated, Dimensions, View } from "react-native";
 
 import {
   separateInnerOuterStyles,
   useEffect,
   useLayout,
-} from '@huds0n/utilities';
+} from "@huds0n/utilities";
 
-import { ContentsFaderContainer } from '../ContentsFader';
+import { ContentsFaderContainer } from "../ContentsFader";
 
-import { useAnimatorStyle } from '../../AnimatorStyle';
-
-export namespace TransitionContainer {
-  export type Props = ContentsFaderContainer.Props & {
-    backgroundColor?: string | null;
-    overrideColor?: string;
-    onSizeChange?: (newSize: { height: number; width: number }) => any;
-  };
-
-  export type Component = React.FunctionComponent<Props>;
-}
+import { useAnimatorStyle } from "../../AnimatorStyle";
+import type { Types } from "../../types";
 
 export function TransitionContainer({
   animate = true,
@@ -35,11 +26,11 @@ export function TransitionContainer({
   pointerEvents,
   useNativeDriver,
   ...viewProps
-}: TransitionContainer.Props) {
+}: Types.TransitionContainerProps) {
   const {
     innerStyle: {
-      alignItems = 'center',
-      justifyContent = 'center',
+      alignItems = "center",
+      justifyContent = "center",
       ...innerStyle
     },
     outerStyle: { backgroundColor: styleBackgroundColor, ...outerStyle },
@@ -60,7 +51,7 @@ export function TransitionContainer({
         });
     },
     [backgroundColor],
-    { layout: 'BEFORE', skipMounts: true },
+    { layout: "BEFORE", skipMounts: true }
   );
 
   const [{ height, width }, onLayout] = useLayout();
@@ -76,7 +67,7 @@ export function TransitionContainer({
         : AnimatorStyle.setStyle({ height, width });
     },
     [height, width],
-    { layout: 'AFTER' },
+    { layout: "AFTER" }
   );
 
   return (
@@ -86,7 +77,7 @@ export function TransitionContainer({
         pointerEvents="none"
         style={{
           ...innerStyle,
-          position: 'absolute',
+          position: "absolute",
           opacity: 0,
         }}
       >
@@ -101,7 +92,7 @@ export function TransitionContainer({
             ...outerStyle,
             alignItems,
             justifyContent,
-            overflow: 'hidden',
+            overflow: "hidden",
           },
           !animate && { height: undefined, width: undefined },
         ]}
@@ -117,11 +108,11 @@ export function TransitionContainer({
           style={{
             alignItems,
             justifyContent,
-            position: 'absolute',
+            position: "absolute",
             height: outerStyle.height
-              ? '100%'
-              : Dimensions.get('screen').height,
-            width: outerStyle.width ? '100%' : Dimensions.get('screen').width,
+              ? "100%"
+              : Dimensions.get("screen").height,
+            width: outerStyle.width ? "100%" : Dimensions.get("screen").width,
             ...innerStyle,
           }}
           useNativeDriver={useNativeDriver}

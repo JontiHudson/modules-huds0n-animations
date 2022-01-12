@@ -1,13 +1,14 @@
-import React, { useRef } from 'react';
-import { Animated, PanResponder, StyleSheet, View } from 'react-native';
+import React, { useRef } from "react";
+import { Animated, PanResponder, StyleSheet, View } from "react-native";
 
-import { AnimatedView, AnimationSheet } from '@huds0n/animations';
-import { Button } from '@huds0n/components';
+import { AnimatedView, AnimationSheet } from "@huds0n/animations";
+import { Button } from "@huds0n/components";
 
-import { DemoState } from '../state';
+import { DemoState } from "../state";
+import { AttachSheet } from "../../src/AnimationSheet";
 
 export default function PanHandler() {
-  const backPress = () => DemoState.setProp('screen', 'WELCOME');
+  const backPress = () => DemoState.setProp("screen", "WELCOME");
 
   const panY = useRef(new Animated.Value(0)).current;
 
@@ -24,7 +25,7 @@ export default function PanHandler() {
       onPanResponderRelease: () => {
         panY.flattenOffset();
       },
-    }),
+    })
   ).current;
 
   return (
@@ -58,26 +59,26 @@ export default function PanHandler() {
 }
 
 const colors = {
-  BLUE: 'blue',
-  RED: 'red',
-  GREEN: 'green',
-  BLACK: 'black',
+  BLUE: "blue",
+  RED: "red",
+  GREEN: "green",
+  BLACK: "black",
 };
 
 const styles = StyleSheet.create({
   backButton: {
     bottom: 10,
     left: 10,
-    position: 'absolute',
+    position: "absolute",
   },
   contentsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
   },
   columnContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   viewBase: {
     height: 50,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const animations = AnimationSheet.create({
+const animations = AttachSheet.create({
   left: [
     {
       input: -200,
