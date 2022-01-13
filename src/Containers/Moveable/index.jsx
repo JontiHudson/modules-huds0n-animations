@@ -15,7 +15,8 @@ function limitNum(source, limit) {
 function closestNum(source, arr) {
     return arr.reduce((prev, curr) => Math.abs(curr - source) < Math.abs(prev - source) ? curr : prev);
 }
-exports.MoveableView = react_1.default.forwardRef(({ children, enable = true, limitX, limitY, onMoveStart, onMoveEnd, onRelease, snapX, snapY, style, useNativeDriver = true, ...props }, ref) => {
+exports.MoveableView = react_1.default.forwardRef((_a, ref) => {
+    var { children, enable = true, limitX, limitY, onMoveStart, onMoveEnd, onRelease, snapX, snapY, style, useNativeDriver = true } = _a, props = (0, tslib_1.__rest)(_a, ["children", "enable", "limitX", "limitY", "onMoveStart", "onMoveEnd", "onRelease", "snapX", "snapY", "style", "useNativeDriver"]);
     const pan = (0, react_1.useRef)(new react_native_1.Animated.ValueXY()).current;
     const x = (0, utilities_1.useAnimatedCurrentValue)(pan.x);
     const y = (0, utilities_1.useAnimatedCurrentValue)(pan.y);
@@ -32,8 +33,8 @@ exports.MoveableView = react_1.default.forwardRef(({ children, enable = true, li
     const [isMoving, setIsMoving] = (0, utilities_1.useState)(false);
     (0, utilities_1.useEffect)(() => {
         isMoving
-            ? onMoveStart?.({ ...currentCoordinates })
-            : onMoveEnd?.({ ...currentCoordinates });
+            ? onMoveStart === null || onMoveStart === void 0 ? void 0 : onMoveStart(Object.assign({}, currentCoordinates))
+            : onMoveEnd === null || onMoveEnd === void 0 ? void 0 : onMoveEnd(Object.assign({}, currentCoordinates));
     }, [isMoving], { layout: "BEFORE" });
     const snapTo = (0, utilities_1.useCallback)((toValue, animate = "SPRING") => {
         const atPosition = Math.round(currentCoordinates.x) === toValue.x &&
@@ -87,7 +88,7 @@ exports.MoveableView = react_1.default.forwardRef(({ children, enable = true, li
         onPanResponderTerminationRequest: () => enable,
         onPanResponderGrant: () => {
             setIsMoving(true);
-            offset.current = { ...currentCoordinates };
+            offset.current = Object.assign({}, currentCoordinates);
         },
         onPanResponderMove: (event, gesture) => {
             const toValue = { x: 0, y: 0 };
@@ -105,7 +106,7 @@ exports.MoveableView = react_1.default.forwardRef(({ children, enable = true, li
         },
         onPanResponderRelease: () => {
             const endCoordinates = snapToClosest();
-            onRelease?.(endCoordinates);
+            onRelease === null || onRelease === void 0 ? void 0 : onRelease(endCoordinates);
         },
     }), [limitDep, snapToClosest, enable]);
     return (<react_native_1.Animated.View {...props} {...panResponder.panHandlers} style={[

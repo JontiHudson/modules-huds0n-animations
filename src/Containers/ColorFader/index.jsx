@@ -7,7 +7,7 @@ const react_native_1 = require("react-native");
 const utilities_1 = require("@huds0n/utilities");
 const AnimatorStyle_1 = require("../../AnimatorStyle");
 function ColorFaderContainer(props) {
-    const { animate = true, animation, backgroundColor, children, overrideColor, style, ...viewProps } = props;
+    const { animate = true, animation, backgroundColor, children, overrideColor, style } = props, viewProps = (0, tslib_1.__rest)(props, ["animate", "animation", "backgroundColor", "children", "overrideColor", "style"]);
     const AnimatorStyle = (0, AnimatorStyle_1.useAnimatorStyle)({
         initialStyle: {
             backgroundColor: backgroundColor ||
@@ -17,10 +17,7 @@ function ColorFaderContainer(props) {
     });
     (0, utilities_1.useEffect)(() => {
         animate &&
-            AnimatorStyle.animate({
-                ...animation,
-                to: { backgroundColor: backgroundColor || undefined },
-            });
+            AnimatorStyle.animate(Object.assign(Object.assign({}, animation), { to: { backgroundColor: backgroundColor || undefined } }));
     }, [backgroundColor], { layout: "BEFORE", skipMounts: true });
     return (<react_native_1.Animated.View {...viewProps} style={[
             style,

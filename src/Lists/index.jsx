@@ -12,7 +12,7 @@ function AnimatedList(props) {
     return handleRender(props, state, setState);
 }
 exports.AnimatedList = AnimatedList;
-function handleState({ ListComponent, horizontal, contentOffset, offsetAnim = new react_native_1.Animated.Value((horizontal ? contentOffset?.x : contentOffset?.y) || 0), }) {
+function handleState({ ListComponent, horizontal, contentOffset, offsetAnim = new react_native_1.Animated.Value((horizontal ? contentOffset === null || contentOffset === void 0 ? void 0 : contentOffset.x : contentOffset === null || contentOffset === void 0 ? void 0 : contentOffset.y) || 0), }) {
     const animationAnim = (0, utilities_1.useAnimatedValue)(-10000);
     const offsetValue = (0, utilities_1.useAnimatedCurrentValue)(offsetAnim);
     const animationValue = (0, utilities_1.useAnimatedCurrentValue)(animationAnim);
@@ -31,7 +31,7 @@ function handleState({ ListComponent, horizontal, contentOffset, offsetAnim = ne
     }));
 }
 function handleRender(props, state, setState) {
-    const { headerOffset, footerOffset, scrollEnabled = true, style, ...passedProps } = props;
+    const { headerOffset, footerOffset, scrollEnabled = true, style } = props, passedProps = (0, tslib_1.__rest)(props, ["headerOffset", "footerOffset", "scrollEnabled", "style"]);
     const { animationInComplete, flatListLength, refs: { AnimatedListComponent }, } = state;
     const onScroll = handleOnScroll(props, state);
     const renderItem = handleRenderItem(props, state, setState);
@@ -43,16 +43,13 @@ function handleRender(props, state, setState) {
 function handleLayout(props, setState) {
     return (0, utilities_1.useCallback)(({ nativeEvent: { layout } }) => {
         const flatListLength = props.horizontal ? layout.width : layout.height;
-        setState((currentState) => ({
-            ...currentState,
-            flatListLength,
-        }));
+        setState((currentState) => (Object.assign(Object.assign({}, currentState), { flatListLength })));
     });
 }
 function animateIn(props, state, setState, flatListLength) {
     const { animationDuration = 2500, animationDelay = 0, onAnimationEnd, useNativeDriver = false, } = props;
     const { refs: { animationAnim, offsetValue }, } = state;
-    setState((s) => ({ ...s, animationInStarted: true }));
+    setState((s) => (Object.assign(Object.assign({}, s), { animationInStarted: true })));
     animationAnim.setValue(-flatListLength + offsetValue.current);
     setTimeout(() => {
         react_native_1.Animated.timing(animationAnim, {
@@ -61,11 +58,8 @@ function animateIn(props, state, setState, flatListLength) {
             useNativeDriver,
         }).start(({ finished }) => {
             if (finished) {
-                onAnimationEnd?.();
-                setState((currentState) => ({
-                    ...currentState,
-                    animationInComplete: true,
-                }));
+                onAnimationEnd === null || onAnimationEnd === void 0 ? void 0 : onAnimationEnd();
+                setState((currentState) => (Object.assign(Object.assign({}, currentState), { animationInComplete: true })));
             }
             else {
                 setTimeout(() => animateIn(props, state, setState, flatListLength), 50);
@@ -83,7 +77,7 @@ function handleOnScroll({ horizontal, onScroll, useNativeDriver = false }, { ani
             duration: 0,
             useNativeDriver,
         }).start();
-        onScroll?.(event);
+        onScroll === null || onScroll === void 0 ? void 0 : onScroll(event);
     }, [animationInComplete]);
 }
 function handleRenderItem(props, state, setState) {
@@ -111,14 +105,9 @@ function handleRenderItem(props, state, setState) {
                     deps: flatListLength,
                 }
                 : undefined} style={{ flex: 1, opacity: state.animationInStarted ? 1 : 0 }} useNativeDriver={useNativeDriver}>
-          {renderItem({
-                ...info,
-                start,
+          {renderItem(Object.assign(Object.assign({}, info), { start,
                 end,
-                row,
-                offsetAnim: animationInComplete ? offsetAnim : animationAnim,
-                offsetValue: animationInComplete ? offsetValue : animationValue,
-            })}
+                row, offsetAnim: animationInComplete ? offsetAnim : animationAnim, offsetValue: animationInComplete ? offsetValue : animationValue }))}
         </Containers_1.AnimatedView>);
     }, [renderItem, animationInComplete, animationInStarted, flatListLength]);
 }
@@ -128,8 +117,8 @@ function getAttachPoints({ at, over, headerOffset = 0, itemLength, numColumns = 
     const start = headerOffset + row * itemLength;
     const end = start - flatListLength;
     return {
-        at: at?.({ index, row, start, end }),
-        over: over?.({ index, row, start, end }),
+        at: at === null || at === void 0 ? void 0 : at({ index, row, start, end }),
+        over: over === null || over === void 0 ? void 0 : over({ index, row, start, end }),
         start,
         end,
         row,

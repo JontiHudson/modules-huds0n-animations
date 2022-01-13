@@ -22,7 +22,8 @@ function ensureClassComponent(Component) {
 }
 function createAnimatedComponent(Component) {
     const AnimatedComponent = react_native_1.Animated.createAnimatedComponent(ensureClassComponent(Component));
-    return react_1.default.forwardRef(({ attach, defaultAnimation, useNativeDriver, style, animate, ...props }, ref) => {
+    return react_1.default.forwardRef((_a, ref) => {
+        var { attach, defaultAnimation, useNativeDriver, style, animate } = _a, props = (0, tslib_1.__rest)(_a, ["attach", "defaultAnimation", "useNativeDriver", "style", "animate"]);
         const copiedRef = (0, utilities_1.useRef)(null);
         const AnimatorStyle = (0, AnimatorStyle_1.useAnimatorStyle)({
             defaultAnimation,
@@ -31,7 +32,7 @@ function createAnimatedComponent(Component) {
         });
         (0, utilities_1.useEffect)(() => {
             attach && AnimatorStyle.attach(attach);
-        }, [attach?.animatedValue, JSON.stringify(attach), attach?.deps], { layout: "BEFORE" });
+        }, [attach === null || attach === void 0 ? void 0 : attach.animatedValue, JSON.stringify(attach), attach === null || attach === void 0 ? void 0 : attach.deps], { layout: "BEFORE" });
         const prevStyle = (0, utilities_1.usePrev)(style) || {};
         (0, utilities_1.useEffect)(() => {
             if (style) {
@@ -54,12 +55,7 @@ function createAnimatedComponent(Component) {
                 });
             }
         }, [animationChangeDep], { layout: "AFTER" });
-        (0, react_1.useImperativeHandle)(ref, () => ({
-            ...copiedRef.current,
-            animate: AnimatorStyle.animate,
-            attach: AnimatorStyle.attach,
-            setStyle: AnimatorStyle.setStyle,
-        }));
+        (0, react_1.useImperativeHandle)(ref, () => (Object.assign(Object.assign({}, copiedRef.current), { animate: AnimatorStyle.animate, attach: AnimatorStyle.attach, setStyle: AnimatorStyle.setStyle })));
         return (<AnimatedComponent ref={copiedRef} {...props} style={AnimatorStyle.style}/>);
     });
 }
