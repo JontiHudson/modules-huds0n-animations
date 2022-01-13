@@ -2,7 +2,7 @@ __example__
 
 .DS_Store
 
-# *.ts
-# *.tsx
+*.ts
+*.tsx
 
 !*.d.ts

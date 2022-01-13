@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Huds0nTest",
+    "slug": "Huds0nTest",
+    "privacy": "unlisted",
+    "platforms": ["ios", "android", "web"],
+    "version": "1.0.0",
+    "orientation": "default",
+    "primaryColor": "#84c397",
+    "updates": {
+      "fallbackToCacheTimeout": 30000
+    },
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "useNextNotificationsApi": true
+    },
+    "ios": {
+      "requireFullScreen": true,
+      "supportsTablet": true
+    },
+    "userInterfaceStyle": "automatic"
+  }
+}

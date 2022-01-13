@@ -10,11 +10,11 @@
     "publish": "node scripts/publish.js"
   },
   "dependencies": {
-    "@huds0n/animations": "1.6.0-beta45",
-    "@huds0n/components": "1.6.0-beta45",
+    "@huds0n/animations": "1.6.0-beta46",
+    "@huds0n/components": "1.6.0-beta46",
     "expo": "^44.0.3",
     "react-native": "0.64.3"
   },
   "private": true,
-  "version": "1.6.0-beta45"
+  "version": "1.6.0-beta46"
 }
